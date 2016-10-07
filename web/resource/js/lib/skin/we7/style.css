@@ -1,0 +1,90 @@
+/* 选择器格式为：html #layui_layer_skin文件夹名stylecss，这一点非常重要 */
+
+html #layui_layer_skinyourskinstylecss {
+	display: none;
+	position: absolute;
+	width: 1989px;
+}
+body .layer-ext-we7 {
+	min-width: 720px;
+	
+}
+body .layer-ext-we7 .layui-layer-ico {
+	position: relative !important;
+	top: 0 !important;
+	left: 0 !important;
+}
+body .layui-layer-loading {
+	text-align: center;
+}
+body .layui-layer-loading .layui-layer-content {
+	padding: 0 !important;
+	display: inline-block;
+	text-align: center;
+}
+body .layer-ext-we7 .layui-layer-title {
+	position: relative;
+	padding: 0 20px;
+	line-height: 38px;
+	height: 38px;
+	background-color: #f4f5f9;
+	background-image: -moz-linear-gradient(top, #f4f5f9 0, #f4f5f9 100%);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f4f5f9), to(#f4f5f9));
+	background-image: -webkit-linear-gradient(top, #f4f5f9 0, #f4f5f9 100%);
+	background-image: -o-linear-gradient(top, #f4f5f9 0, #f4f5f9 100%);
+	background-image: linear-gradient(to bottom, #f4f5f9 0, #f4f5f9 100%);
+	border-bottom: 1px solid #e7e7eb;
+	line-height: 52px;
+	height: 52px;
+	border-bottom-width: 0;
+}
+
+body .layer-ext-we7 .layui-layer-content {
+	padding: 78px 57px 120px;
+	text-align: center;
+}
+
+body .layer-ext-we7 .layui-layer-btn {
+	background-color: #f4f5f9;
+	margin: 0;
+	padding: 25px 0;
+	text-align: center;
+	border-top: 1px solid transparent;
+	box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+}
+
+body .layer-ext-we7 .layui-layer-btn a {
+	display: inline-block;
+	overflow: visible;
+	padding: 0 22px;
+	height: 30px;
+	line-height: 30px;
+	*line-height: 28px;
+	vertical-align: middle;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	font-size: 14px;
+	border-width: 1px;
+	border-style: solid;
+	cursor: pointer;
+}
+
+body .layer-ext-we7 .layui-layer-btn0 {
+	background-color: #428bca;
+background-image: -moz-linear-gradient(top,#428bca 0,#428bca 100%);
+background-image: -webkit-gradient(linear,0 0,0 100%,from(#428bca),to(#428bca));
+background-image: -webkit-linear-gradient(top,#44b549 0,#428bca 100%);
+background-image: -o-linear-gradient(top,#428bca 0,#428bca 100%);
+background-image: linear-gradient(to bottom,#428bca 0,#428bca 100%);
+border-color: #428bca;
+color: #fff;
+}
+
+body .layer-ext-we7 .layui-layer-input {
+	width: 100%;
+}

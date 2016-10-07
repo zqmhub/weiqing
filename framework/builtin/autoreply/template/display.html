@@ -1,0 +1,403 @@
+<div class="form-group">
+	<p>触发后回复内容</p>
+	<div class="reply-content">
+		<div style="width:100%;" class="tab-pane" id="trigger_basic">
+			<input type="hidden" name="reply_basic" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_news">
+			<input type="hidden" name="reply_news" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_image">
+			<input type="hidden" name="reply_image" value="">
+		</div>
+		<div style="width:100%" class="tab-pane" id="trigger_music">
+			<input type="hidden" name="reply_music" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_voice">
+			<input type="hidden" name="reply_voice" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_video">
+			<input type="hidden" name="reply_video" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_wxcard">
+			<input type="hidden" name="reply_wxcard" value="">
+		</div>
+		<div style="width:100%;" class="tab-pane" id="trigger_keyword">
+			<input type="hidden" name="reply_keyword" value="">
+		</div>
+	</div>
+	<div class="panel-heading">
+		<ul class="replytype nav nav-pills">
+			<li data-type="basic"><a href="javascripr:;" onclick="select_mediaid('basic');">文字</a></li>
+			<li data-type="news"><a href="javascript:;" onclick="select_mediaid('news');">图文</a></li>
+			<li data-type="image"><a href="javascript:;" onclick="select_mediaid('image');">图片</a></li>
+			<li data-type="music"><a href="javascript:;" onclick="select_mediaid('music');">音乐</a></li>
+			<li data-type="voice"><a href="javascript:;" onclick="select_mediaid('voice');">语音</a></li>
+			<li data-type="video"><a href="javascript:;" onclick="select_mediaid('video');">视频</a></li>
+			<li data-type="wxcard"><a href="javascript:;" onclick="select_mediaid('wxcard');">卡券</a></li>
+			<li data-type="keyword"><a href="javascript:;" onclick="select_mediaid('keyword');">触发关键字</a></li>
+		</ul>
+	</div>
+</div>
+<script>
+	//删除已选素材
+	var delmedia = function(type, ele) {
+		var oldVal = $(':hidden[name="reply_'+type+'"]').val();
+		var newVal;
+		var media = $(ele).attr('data-media');
+		switch(type) {
+			case 'basic':
+				var middleVal = oldVal.split(',');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key) {
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				break;
+			case 'image':
+				var middleVal = oldVal.split(',');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key) {
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				break;
+			case 'news':
+				// oldVal = oldVal.split(',');
+				// index = _.indexOf(oldVal, media);
+				// oldVal.splice(index, 1);
+				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				break;
+			case 'music':
+				// oldVal = oldVal.split(',');
+				// index = _.indexOf(oldVal, media);
+				// oldVal.splice(index, 1);
+				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				break;
+			case 'voice':
+				var middleVal = oldVal.split(',');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key) {
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				break;
+			case 'video':
+				var middleVal = oldVal.slice(1, -1).split('},{');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key){
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				angular.forEach(newVal, function(val, key) {
+					newVal[key] = '{'+val+'}';
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				break;
+			case 'wxcard':
+				var middleVal = oldVal.slice(1, -1).split('},{');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key){
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				angular.forEach(newVal, function(val, key) {
+					newVal[key] = '{'+val+'}';
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				break;
+			case 'keyword':
+				// oldVal = oldVal.split(',');
+				// index = _.indexOf(oldVal, media);
+				// oldVal.splice(index, 1);
+				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				break;
+		}
+		$(ele).parent('.del-'+type+'-media').remove();
+	};
+
+	window.select_mediaid = function(type){
+		var option = {
+			type: type,
+			ignore: {
+				basic: type === 'basic' ? false : true,
+				wxcard: type === 'wxcard' ? false : true,
+				image: type === 'image' ? false : true,
+				music: type === 'music' ? false : true,
+				news: type === 'news' ? false : true,
+				video: type === 'video' ? false : true,
+				voice: type === 'voice' ? false : true,
+				keyword: type === 'keyword' ? false : true,
+			}
+		};
+		util.material(function(material){
+			var replyVal = [];
+			$(':hidden[name="reply_'+type+'"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply_'+type+'"]').val());
+			if(type == 'basic') {
+				if($.trim(material.content).length == 0) {
+					return false;
+				}
+				replyVal.push(angular.toJson(material.content));
+				$(':hidden[name="reply_'+type+'"]').val(replyVal);
+				$('#trigger_'+type).append(
+					'<div class="del-'+type+'-media">'+material.content+
+					'	<a href="javascript:;" data-media="'+material.content+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+					'</div>'
+				);
+			}else if(type == 'keyword') {
+				if($.trim(material.id).length == 0) {
+					return false;
+				}
+				replyVal.push(angular.toJson(material.id));
+				$(':hidden[name="reply_'+type+'"]').val(replyVal);
+				var keywords = [];
+				for(var i = 0; i < material.child_items.length; i++) {
+					keywords += '&nbsp;&nbsp;' + material.child_items[i].content;
+				}
+				$('#trigger_'+type).append(
+					'<div class="del-'+type+'-media">'+material.name+
+					'	<span>'+keywords+'</span>'+
+					'	<a href="javascript:;" data-media="'+material.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+					'</div>'
+				);
+			}else {
+				if($.trim(material.media_id).length == 0) {
+					return false;
+				};
+				switch(type) {
+					case 'image':
+						replyVal.push(angular.toJson(material.media_id));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;mediaid：</span>'+material.media_id+
+							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+					case 'news':
+						replyVal.push(angular.toJson(material.media_id));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							// '	<span>&nbsp;标题：</span>'+material.tag.title+
+							// '	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
+							'	<span>&nbsp;mediaid：</span>'+material.media_id+
+							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+					case 'voice':
+						replyVal.push(angular.toJson(material.media_id));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;mediaid：</span>'+material.media_id+
+							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+					case 'video':
+						replyVal.push(angular.toJson({
+							mediaid: material.media_id,
+							title: material.tag.title,
+							description: material.tag.description
+						}));
+
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;标题：</span>'+material.tag.title+
+							'	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
+							'	<span>&nbsp;mediaid：</span>'+material.media_id+
+							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+					case 'music':
+						replyVal.push(angular.toJson(material.media_id));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							// '	<span>&nbsp;标题：</span>'+material.tag.title+
+							// '	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
+							'	<span>&nbsp;mediaid：</span>'+material.media_id+
+							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+					case 'wxcard':
+						replyVal.push(angular.toJson({
+							mediaid: material.card_id,
+							title: material.title,
+							cid: material.id,
+							brandname: material.brand_name,
+							logo_url: material.logo_url,
+							success: '成功',
+							error: '失败'
+						}));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;标题：</span>'+material.title+
+							'	<span>&nbsp;描述：</span>'+(material.brand_name ? material.brand_name : '--')+
+							'	<span>&nbsp;mediaid：</span>'+material.card_id+
+							'	<span>&nbsp;cid：</span>'+material.id+
+							'	<a href="javascript:;" data-media="'+material.card_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+						break;
+				}
+				$(':hidden[name="reply_'+type+'"]').val(replyVal);
+			}
+		}, option);
+	};
+
+	window.initReplyController = function($scope) {
+		$scope.context = {};
+		$scope.context.items = {php echo !empty($replies) ? json_encode($replies) : []};
+		angular.forEach($scope.context.items, function(val, key){
+			var replyVal = [];
+			var type = key;
+			switch(type) {
+				case 'basic':
+					angular.forEach(val, function(basicVal, basicKey) {
+						replyVal.push(angular.toJson(basicVal.content));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+basicVal.content+
+							'	<a href="javascript:;" data-media="'+basicVal.content+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'news':
+					angular.forEach(val, function(newsVal, newsKey) {
+						replyVal.push(angular.toJson(newsVal.rid));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+newsVal.id+
+							// '	<img src="'+val.thumb+'">'+
+							'	<a href="javascript:;" data-media="'+newsVal.id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'image':
+					angular.forEach(val, function(imageVal, imageKey) {
+						replyVal.push(angular.toJson(imageVal.mediaid));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+imageVal.mediaid+
+							'	<a href="javascript:;" data-media="'+imageVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'voice':
+					angular.forEach(val, function(voiceVal, voiceKey) {
+						replyVal.push(angular.toJson(voiceVal.mediaid));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+voiceVal.mediaid+
+							'	<a href="javascript:;" data-media="'+voiceVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;	
+				case 'video':
+					angular.forEach(val, function(videoVal, videoKey) {
+						replyVal.push(angular.toJson({
+							mediaid: videoVal.mediaid,
+							title: videoVal.title,
+							description: videoVal.description
+						}));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;标题：</span>'+ (videoVal.title ? videoVal.title : '--') +
+							'	<span>&nbsp;描述：</span>'+ (videoVal.description ? videoVal.description : '--')+
+							'	<span>&nbsp;mediaid：</span>'+videoVal.mediaid+
+							'	<a href="javascript:;" data-media="'+videoVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'wxcard':
+					angular.forEach(val, function(wxcardVal, wxcardKey) {
+						replyVal.push(angular.toJson({
+							mediaid: wxcardVal.card_id,
+							title: wxcardVal.title,
+							cid: wxcardVal.cid,
+							brandname: wxcardVal.brand_name,
+							logo_url: wxcardVal.logo_url,
+							success: wxcardVal.success,
+							error: wxcardVal.error
+						}));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+
+							'	<span>&nbsp;标题：</span>'+ (wxcardVal.title ? wxcardVal.title : '--') +
+							'	<span>&nbsp;描述：</span>'+ (wxcardVal.brand_name ? wxcardVal.brand_name : '--')+
+							'	<span>&nbsp;mediaid：</span>'+wxcardVal.card_id+
+							'	<span>&nbsp;cid：</span>'+wxcardVal.cid+
+							'	<a href="javascript:;" data-media="'+wxcardVal.card_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'keyword':
+					//现无场景，暂屏蔽，有用武之地再开放，逻辑如下，格式有待调整。
+					// angular.forEach(val, function(keywordVal, keywordKey) {
+					// 	replyVal.push(angular.toJson(keywordVal.id));
+					// 	var keywords = [];
+					// 	for(var i = 0; i < keywordVal.child_items.length; i++) {
+					// 		keywords += '&nbsp;&nbsp;' + keywordVal.child_items[i].content;
+					// 	}
+					// 	$('#trigger_'+type).append(
+					// 		'<div class="del-'+type+'-media">'+keywordVal.name+
+					// 		'	<span>'+keywords+'</span>'+
+					// 		'	<a href="javascript:;" data-media="'+keywordVal.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+					// 		'</div>'
+					// 	);
+					// });
+					// $(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+				case 'music':
+					angular.forEach(val, function(musicVal, musicKey) {
+						replyVal.push(angular.toJson(musicVal.rid));
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+musicVal.id+
+							'	<a href="javascript:;" data-media="'+musicVal.id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					break;
+			}
+		});
+	};
+
+	window.validateReplyForm = function(form, $, _, util, $scope) {
+		var allEmpty = true;
+		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword'];
+		if($scope.reply.entry.module == 'auto') {
+			angular.forEach(modules, function(val, key){
+				if($(':hidden[name="reply_'+val+'"]').val().trim() != '') {
+					allEmpty = false;
+				};
+			});
+		}else {
+			if($(':hidden[name="reply_'+$scope.reply.entry.module+'"]').val().trim() != ''){
+				allEmpty = false;
+			};
+		}
+		if(allEmpty) {
+			util.message('请添加有效的回复内容。');
+			return false;
+		}
+		return true;
+	};
+</script>

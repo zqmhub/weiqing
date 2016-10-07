@@ -1,0 +1,12 @@
+<ol class="breadcrumb">
+	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+	<li><a href="{url 'system/welcome'}">系统</a></li>
+	<li class="active">{if $do == 'installed'}已安装的后台皮肤{elseif $do == 'prepared'}安装后台皮肤{elseif $do == 'manager'}管理后台皮肤{/if}</li>
+</ol>
+<ul class="nav nav-tabs">
+	<li{if $do == 'installed'} class="active"{/if}><a href="{php echo url('extension/webtheme/installed');}">已安装的后台皮肤</a></li>
+	<li{if $do == 'prepared' || $do == 'install'} class="active"{/if}><a href="{php echo url('extension/webtheme/prepared');}">安装后台皮肤</a></li>
+	<li{if $do == 'designer'} class="active"{/if}><a href="{php echo url('extension/webtheme/designer');}">设计后台皮肤</a></li>
+	<li{if $do == 'manager'} class="active"{/if}><a href="{php echo url('extension/webtheme/manager');}">管理后台风格</a></li>
+	<li><a href="http://bbs.we7.cc/forum-46-1.html" target="_blank">查找更多后台皮肤</a></li>
+</ul>

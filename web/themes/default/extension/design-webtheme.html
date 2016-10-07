@@ -1,0 +1,146 @@
+{template 'common/header-new'}
+<script type="text/javascript">
+require(['filestyle', 'util'], function($, u){
+	$(".form-group").find(':file').filestyle({buttonText: '上传图片'});
+	$('.form-control').blur(function(){
+		var identifie = $('input[name="webtheme[identifie]"]').val();
+		$(".identifie").html(identifie);
+	});
+	/*表单数据检测*/
+	$("#form1").submit(function(){
+		var msg = '';
+		var m = $.trim($(':text[name="webtheme[name]"]').val());
+		if(m == '') {
+			msg += '必须输入模板名称. <br />';
+		}
+		if((/\*\/|\/\*|eval|\$\_/i).test(m)) {
+			msg += '必须输入有效的模板名称. <br />';
+		}
+		var identifie = $.trim($(':text[name="webtheme[identifie]"]').val());
+		if(identifie == '' || !(/^[a-z][a-z\d_]+$/i).test(identifie)) {
+			msg += '必须输入模板标识(只能包括字母和数字, 且只能以字母开头). <br />';
+		}
+		var author = $.trim($(':text[name="webtheme[author]"]').val());
+		if(author == '' || (/\*\/|\/\*|eval|\$\_/i).test(author)) {
+			msg += '必须输入有效的作者. <br />';
+		}
+		var url = $.trim($(':text[name="webtheme[url]"]').val());
+		if(url == '' || (/\*\/|\/\*|eval|\$\_/i).test(url)) {
+			msg += '必须输入有效的模板发布页. <br />';
+		}
+		if($(':checkbox[name="versions[]"]:checked').length == 0) {
+			msg += '必须选择模板支持的微擎版本. <br />';
+		}
+		if(msg != '') {
+			u.message(msg, '', 'error');
+			return false;
+		}
+		if($(':hidden[name=do]').val() == '') {
+			return false;
+		}
+		return true;
+	});
+});
+
+</script>
+
+{template 'extension/webtheme-tabs'}
+
+<div class="clearfix">
+	<form class="form-horizontal form" id="form1" action="" method="post" enctype="multipart/form-data">
+		<h5 class="page-header">主页模板基本信息 <small>这里来定义你自己主页模板的基本信息</small></h5>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">主页模板名称</label>
+			<div class="col-sm-10 col-xs-12">
+				<input type="text" class="form-control" placeholder="" name="webtheme[name]"/>
+				<span class="help-block">主页模板的名称, 由于显示在用户的主页模板列表中. 不要超过10个字符 </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">主页模板标识</label>
+			<div class="col-sm-10 col-xs-12">
+					<input type="text" class="form-control" placeholder="" name="webtheme[identifie]" />
+					<span class="help-block">主页模板标识符, 应对应主页模板文件夹的名称, 微擎系统按照此标识符查找主页模板定义, 只能由字母数字下划线组成 </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">主页模板类型</label>
+			<div class="col-sm-10 col-xs-12">
+				<select name="webtheme[type]" class="form-control">
+					{loop $webtheme_types $type}
+						<option value="{$type['name']}">{$type['title']}</option>
+					{/loop}
+				</select>
+				<span class="help-block">主页模板的类型, 用于分类展示和查找你的主页模板</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">主页模板介绍</label>
+			<div class="col-sm-10 col-xs-12">
+					<textarea class="form-control" name="webtheme[description]" rows="4"></textarea>
+					<span class="help-block">主页模板详细描述, 详细介绍主页模板的功能和使用方法 </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">作者</label>
+			<div class="col-sm-10 col-xs-12">
+					<input type="text" class="form-control" placeholder="" name="webtheme[author]"/>
+					<span class="help-block">主页模板的作者, 留下你的大名吧</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">发布页</label>
+			<div class="col-sm-10 col-xs-12">
+					<input type="text" class="form-control" placeholder="" name="webtheme[url]" value="http://bbs.we7.cc/" />
+					<span class="help-block">主页模板的发布页, 用于发布主页模板更新信息的页面, 推荐使用微擎主页模板版块</span>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">兼容的微擎版本</label>
+			<div class="col-sm-10 col-xs-12">
+				{loop $versions $v}
+					<label class="checkbox-inline">
+						<input type="checkbox" name="versions[]" value="{$v}" />WeEngine {$v}
+					</label>
+				{/loop}
+				<span class="help-block">当前主页模板兼容的微擎系统版本, 安装时会判断版本信息, 不兼容的版本将无法安装</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">主页模板背景</label>
+			<div class="col-sm-10 col-xs-12">
+				<input type="file" name="preview" value="{$m['preview']}">
+				<span class="help-block">主页模板封面, 大小为 145*225, 更好的设计将会获得官方推荐位置</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label"></label>
+			<div class="col-sm-10 col-xs-12">
+					<input name="method" type="hidden" value="download"/>
+					<input name="token" type="hidden" value="{$_W['token']}" />
+					{if $available['create']}
+					<input type="submit" class="btn btn-primary" name="submit" onclick="$(':hidden[name=method]').val('create');" value="直接生成主页模板文件" />
+					{else}
+					<input type="submit" class="btn btn-primary disabled" disabled="disabled" name="submit" value="直接生成主页模板文件" />
+					<div class="alert-warning alert" style="width:auto;margin-top:5px;">需要 addons 目录具有可写权限</div>
+					{/if}
+					<span class="help-block">点此直接在源码目录 <span class="identifie">app/themes/</span> 处生成主页模板开发的主页模板文件, 方便快速开发</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label"></label>
+			<div class="col-sm-10 col-xs-12">
+					{if $available['download']}
+					<input type="submit" class="btn btn-primary span3" name="submit" onclick="$(':hidden[name=method]').val('download');" value="下载主页模板文件" />
+					{else}
+					<input type="submit" class="btn btn-primary span3 disabled" disabled="disabled" name="submit" value="下载主页模板文件" />
+					<div class="alert-warning alert">需要启用 Zip 主页模板</div>
+					{/if}
+					<span class="help-block">如果您的服务器不能直接读写文件, 请下载后上传至服务器目录 <span class="identifie">app/themes/</span> 下来编辑开发 </span>
+			</div>
+		</div>
+		
+	</form>
+</div>
+{template 'common/footer-new'}

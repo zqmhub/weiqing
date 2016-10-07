@@ -1,0 +1,45 @@
+{template 'header'}
+<style>
+	body{
+	font:{$_W['styles']['fontsize']} {$_W['styles']['fontfamily']};
+	color:{$_W['styles']['fontcolor']};
+	padding:0;
+	margin:0;
+	background-image:url('{if !empty($_W['styles']['indexbgimg'])}{$_W['styles']['indexbgimg']}{/if}');
+	background-size:cover;
+	background-color:{if empty($_W['styles']['indexbgcolor'])}#E9E9E9{else}{$_W['styles']['indexbgcolor']}{/if};
+	{$_W['styles']['indexbgextra']}
+	}
+	a{color:{$_W['styles']['linkcolor']}; text-decoration:none;}
+	{$_W['styles']['css']}
+	.box{width:100%;overflow:hidden;margin-top:10px;}
+	.box .box-item{float:left; text-align:center; display:block; text-decoration:none; outline:none; overflow:hidden; width:47%; height:115px; color:#333; background:#FFF; margin:0 0 2% 2%; padding:2% 0 0 0; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);}
+	.box .box-item i{display:block; height:80px; line-height:80px; margin:0 auto; font-size:40px; vertical-align:middle; color:#EEE; background:#C9C9C9; overflow:hidden;}
+	.box .box-item span{color:{$_W['styles']['fontnavcolor']};display:block;font-size:14px; width:90%; height:30px; line-height:30px; margin:0 5%; overflow:hidden;}
+	.box ul li{background-color:#fff;padding:0 10px;margin:1%;display: inline-block;height:45px;width:100%;}
+	.box ul li a{text-decoration: none;}
+	.box .title{color:#333;}
+	.box .createtime{color:#999;font-size:12px}
+</style>
+<div class="box clearfix">
+	{data func="site_navs" item="row"}
+	{$row['html']}
+	{/data}
+
+	<!-- 该分类下文章-start -->
+	{if $_GPC['c'] == 'site' && $_GPC['a'] == 'site'}
+	<ul class="list list-unstyled">
+		{data func="site_article" cid=$cid return="true" assign="result"}
+			{loop $result['list'] $row}
+			<li>
+				<a href="{$row['linkurl']}">
+					<div class="title">{php echo cutstr($row['title'],20,1);}</div>
+					<div class="createtime">{php echo date('Y-m-d H:i:s', $row['createtime'])}</div>
+				</a>
+			</li>
+			{/loop}
+	</ul>
+	{/if}
+	<!-- 该分类下文章-start -->
+</div>
+{template 'footer'}

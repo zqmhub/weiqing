@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest versionCode="0.5,0.51">
+    <identifie><![CDATA[style_car]]></identifie>
+    <title><![CDATA[微站微汽车]]></title>
+    <type><![CDATA[car]]></type>
+    <description><![CDATA[由微擎提供微站微汽车]]></description>
+    <author><![CDATA[WeEngine Team]]></author>
+    <url><![CDATA[http://bbs.we7.cc]]></url>
+    <type><![CDATA[car]]></type>
+</manifest>

@@ -1,0 +1,131 @@
+{php define('MUI', true);}
+{template 'common/header'}
+<div class="mui-content scan-pay">
+	<div class="mui-text-center mui-pa10 qrcode">
+		<div class="qrcode-block" data-url="{php echo murl('entry', array('m' => 'paycenter', 'do' => 'selfpay', 'clerk_id' => $_W['user']['clerk_id']), true, true);}" style="margin-top:20px"></div>
+		<div class="mui-card-block">
+			<div class="scan">扫一扫</div>
+		</div>
+	</div>
+	<div class="or mui-text-muted mui-text-center">或者</div>
+	<form action="{php echo url('mc/card/consume')}" method="post" id="pay-form">
+		<div class="mui-pa10 mui-bg-white">
+			<h5 class="mui-desc-title">设置付款金额</h5>
+			<div class="mui-input-row"><input type="text" value="" name="fee" placeholder="输入金额"/></div>
+			<div style="display:none">
+				<div class="mui-input-row"><input type="text" value="" name="body" placeholder="添加收款理由"/></div>
+				<div class="mui-text-right mui-text-success mui-mb10 hide-body">收起</div>
+			</div>
+			<div class="mui-text-right mui-text-success mui-mb10 add-body" style="display:none;">添加付款理由</div>
+			<button class="mui-btn mui-btn-success mui-btn-block">发起付款</button>
+			<input type="hidden" name="token" value="{$_W['token']}"/>
+			<input type="hidden" name="submit" value="{$_W['token']}"/>
+		</div>
+	</form>
+</div>
+<script>
+require(['jquery.qrcode'], function(){
+	$('#pay-form').submit(function(){
+		var fee = $.trim($('#pay-form :text[name="fee"]').val());
+		reg = /^[0-9]+([.]{1}[0-9]{1,2})?$/;
+		if(!fee) {
+			util.toast('付款金额应大于0', '', 'error');
+			return false;
+		}
+		if (!reg.test(fee)) {
+			$('#pay-form :text[name="fee"]').val('');
+			util.toast('付款金额有误', '', 'error')
+			return false;
+		}
+		return true;
+	});
+
+	$('.add-body').click(function(){
+		$(this).prev().show();
+		$(this).hide();
+	});
+
+	$('.hide-body').click(function(){
+		$(this).parent().hide();
+		$('.add-body').show();
+	});
+
+	var url = $('.qrcode-block').data('url');
+	$('.qrcode-block').html('').qrcode({
+		render: 'canvas',
+		width: 150,
+		height: 150,
+		text: url
+	});
+
+});
+	// require(['util'], function(u){
+	// 	$(':text[name="credit"]').keyup(function(){
+	// 		var credit = parseFloat($(this).val());
+	// 		if(isNaN(credit)) {
+	// 			return false;
+	// 		}
+	// 		var price = credit;
+	// 		{if $setting['discount_type'] > 0 && !empty($mine_discount)}
+	// 			var discount = '{php echo json_encode($mine_discount);}';
+	// 			discount = $.parseJSON(discount);
+	// 			var type = "{$setting['discount_type']}";
+
+	// 			discount.condition = parseFloat(discount.condition);
+	// 			discount.discount = parseFloat(discount.discount);
+	// 			if(credit >= discount.condition) {
+	// 				if(type == 1) {
+	// 					price = credit - discount.discount;
+	// 				} else {
+	// 					if(!discount.discount) {
+	// 						discount.discount = 1;
+	// 					}
+	// 					price = credit * discount.discount;
+	// 				}
+	// 				price = price.toFixed(2);
+	// 				if(price < 0) {
+	// 					price = 0;
+	// 				}
+	// 			}
+	// 		{/if}
+
+	// 		if(price >= 0) {
+	// 			$('#price').html(price+'元');
+	// 			$(':hidden[name="last_credit"]').val(price);
+	// 			$('#discount').show();
+	// 		}
+	// 	});
+
+
+	// 	$('#form1').submit(function(){
+	// 		{if !empty($stores)}
+	// 			var store = $('#store_id').val();
+	// 			if(!store) {
+	// 				util.toast('请选择消费门店', '', 'error');
+	// 				return false;
+	// 			}
+	// 		{/if}
+
+	// 		var member_credit = parseFloat("{$_W['member']['credit2']}");
+	// 		var credit = parseFloat($('#form1 :text[name="credit"]').val());
+	// 		var last_credit = credit;
+
+	// 		var last_credit = parseFloat($('#form1 :hidden[name="last_credit"]').val());
+	// 		if(isNaN(credit)) {
+	// 			util.toast('请输入消费金额', '', 'error');
+	// 			return false;
+	// 		}
+	// 		if(isNaN(last_credit) || !last_credit) {
+	// 			util.toast('实际支付金额错误', '', 'error');
+	// 			return false;
+	// 		}
+	// 		if(member_credit < last_credit) {
+	// 			util.toast('余额不够，请先充值', '', 'error');
+	// 			return false;
+	// 		}
+	// 	});
+	// });
+</script>
+{template 'mc/footer'}
+{template 'common/footer'}
+

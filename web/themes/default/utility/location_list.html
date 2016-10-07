@@ -1,0 +1,23 @@
+{if empty($locations)}
+您现在还没有门店，现在去
+<a href="{php echo url('activity/store/post')}">添加门店</a>
+{else}
+<table class="table">
+	<thead>
+		<th style="width: 60px;">选择</th>
+		<th>门店名称</th>
+		<th>分名称</th>
+		<th>地址</th>
+	</thead>
+	<tbody>
+	{loop $locations $location}
+		<tr>
+			<td><input name="location[]" class="locations"  type="checkbox" value="{if COUPON_TYPE == WECHAT_COUPON}{$location['location_id']}{else}{$location['id']}{/if}"></td>
+			<td>{$location['business_name']}</td>
+			<td>{$location['branch_name']}</td>
+			<td>{$location['address']}</td>
+		</tr>
+	{/loop}
+	</tbody>
+</table>
+{/if}

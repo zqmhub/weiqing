@@ -1,0 +1,25 @@
+{template 'common/header-new'}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        云服务请求状态
+    </div>
+    <div class="panel-body">
+        <h4 class="text-primary">云服务请求数据正在初始化，请稍后...</h4>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        var refreshIntervalId = setInterval(function() {
+            $.post("{php echo url('cloud/upgrade/check');}", {}, function(response) {
+                if (response.message.code == 200) {
+                    window.location.href = "{php echo url('cloud/upgrade');}";
+                    clearInterval(refreshIntervalId);
+                }
+            }, 'json')
+        }, 1000);
+    });
+</script>
+
+{template 'common/footer-new'}

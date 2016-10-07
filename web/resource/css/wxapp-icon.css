@@ -1,0 +1,24 @@
+
+@font-face {font-family: "wi";
+  src: url('../fonts/wxapp.eot?t=1475061415'); /* IE9*/
+  src: url('../fonts/wxapp.eot?t=1475061415#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../fonts/wxapp.woff?t=1475061415') format('woff'), /* chrome, firefox */
+  url('../fonts/wxapp.ttf?t=1475061415') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../fonts/wxapp.svg?t=1475061415#wi') format('svg'); /* iOS 4.1- */
+}
+
+.wi {
+  font-family:"wi" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+.wi-step-project:before { content: "\e600"; }
+.wi-step-select:before { content: "\e601"; }
+.wi-select-app:before { content: "\e602"; }
+.wi-select-diy:before { content: "\e603"; }
+.wi-select-tem:before { content: "\e604"; }
+.wi-step-buttom:before { content: "\e605"; }
+.wi-step-down:before { content: "\e606"; }

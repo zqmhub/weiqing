@@ -1,0 +1,47 @@
+{data module="" func="site_slide_search" return="" item="row" limit="4"}  
+	<li>Name： {$row['thumb']}</li>
+{/data}
+{loop $navs $nav}
+<a href="{$nav['url']}" class="box-item">
+	{if !empty($nav['icon'])}
+	<i style="background:url({$_W['attachurl']}{$nav['icon']}) no-repeat;background-size:cover;"></i>
+	{else}
+	<i class="fa {$nav['css']['icon']['icon']}" style="{$nav['css']['icon']['style']}"></i>
+	{/if}
+	<span style="{$nav['css']['name']}" title="{$nav['name']}">{$nav['name']}</span>
+</a>
+{/loop}
+
+{data func="site_navs" section="1" return="" item="row"}  
+	<li>{$row['iteration']}.{$row['html']}</li>
+{/data}
+
+{data module="site" func="site_article" cid=$cid return="true" assign="result"}
+{loop $result['list'] $row}
+<li>
+	<div class="info">
+		<h3>{$row['title']}</h3>
+		<p class="text">{$row['description']}</p>
+	</div>
+	<div class="pic">
+		<img src="{php echo tomedia($row['thumb'])}">
+	</div>
+</li>
+{/loop}
+{$result['pager']}
+
+
+<h1>微文章列表测试</h1>
+<ul class="list list-unstyled">
+	{data module="site" func="site_article" cid="$cid" assign="result" return="true"}
+	{loop $result['list'] $row}
+	<li>
+		<a href="{$row['linkurl']}">
+			{if $row['thumb']}<img src="{$row['thumb']}" class="pull-right thumb" onerror="this.parentNode.removeChild(this)" />{/if}
+			<div class="title">{$row['title']}</div>
+			<div class="createtime">{php echo date('Y-m-d H:i:s', $row['createtime'])}</div>
+		</a>
+	</li>
+	{/loop}
+</ul>
+
