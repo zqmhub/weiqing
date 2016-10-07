@@ -24,3 +24,7 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+data/**/*
+attachment/**/*
+!attachment/images/global/**/*
