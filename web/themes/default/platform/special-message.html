@@ -3,25 +3,7 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a href="{url 'platform/special/message'}">特殊消息类型处理</a></li>
 </ul>
-<table>
-	<thead>
-		<th style="width: 200px;">类型</th>
-		<th style="width: 200px;">关键字</th>
-		<th style="width: 100px;">状态</th>
-		<th>操作</th>
-	</thead>
-	<tbody>
-	{loop $ds $row}
-	<tr>
-		<td>{$row['title']}</td>
-		<td> {$setting[$row['type']][$setting[$row['type']]['type']]}</td>
-		<td>{if $row['status'] == 1}开启{else}关闭{/if}</td>
-		<td><a href="{php echo url('platform/special/post', array('type' => $row['type']))}">编辑</a></td>
-	<tr>
-		{/loop}
-	</tbody>
-</table>
-<tr></tr>
+
 <div class="clearfix">
 	<form action="" method="post" class="form-horizontal" role="form">
 		<div class="panel panel-default">

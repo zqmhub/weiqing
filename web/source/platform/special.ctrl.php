@@ -1,11 +1,11 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_special');
-$dos = array('display', 'set', 'cancel', 'message', 'search_key', 'post');
+$dos = array('display', 'set', 'cancel', 'message', 'search_key');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'display';
 
 load()->model('reply');
@@ -155,11 +155,6 @@ if($do == 'cancel') {
 	pdo_update('uni_settings', $data, array('uniacid' => $_W['uniacid']));
 	cache_delete("unisetting:{$_W['uniacid']}");
 	message('取消系统回复成功！', referer(), 'success');
-}
-
-if ($do == 'post') {
-	$type = $_GPC['type'];
-	
 }
 
 
