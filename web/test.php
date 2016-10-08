@@ -12,7 +12,7 @@ load()->func('communication');
 load()->model('cache');
 load()->model('frame');
 load()->model('cloud');
-load()->classs('coupon');
+load()->classs('coupon');12
 
 echo md5('日本1111');exit;
 $qiniu_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php'));
