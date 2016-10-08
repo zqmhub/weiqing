@@ -247,9 +247,7 @@ function user_account_permission() {
 		$uniacid_num = 0;
 	} else {
 		//再次判断公众号是否真实存在
-		$sql = "SELECT COUNT(*) FROM ". tablename('uni_account'). " AS u RIGHT JOIN " .
-			tablename('account')." AS a on u.default_acid = a.acid WHERE u.uniacid IN(". implode(',', array_keys($uniacocunts)). ")";
-		$uniacid_num = pdo_fetchcolumn($sql);
+		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $_W['uid'], ':role' => 'owner'));
 	}
 	$data = array(
 		'group_name' => $group['name'],
