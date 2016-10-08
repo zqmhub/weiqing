@@ -13,7 +13,7 @@ load()->model('cache');
 load()->model('frame');
 load()->model('cloud');
 load()->classs('coupon');
-
+echo 'oooo';
 echo md5('日本1111');exit;exit;
 $qiniu_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php'));
 $qiniu_zone = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php'));
