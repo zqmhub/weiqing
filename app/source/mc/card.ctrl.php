@@ -32,13 +32,13 @@ if($do == 'sign_display') {
 		$sign_set['third_group_day'] => $sign_set['third_group_num'],
 		$current_month_days => $sign_set['full_sign_num'],
 	);
-	if (!empty($sign_rules[$total])) {
-		$today_sign_credit = $sign_rules[$total];
+	if (!empty($sign_rules[$total + 1])) {
+		$today_sign_credit = $sign_rules[$total + 1];
 	} else {
 		$today_sign_credit = $sign_set['everydaynum'];
 	}
-	if (!empty($sign_rules[$total + 1])) {
-		$tomorrow_sign_credit = $sign_rules[$total + 1];
+	if (!empty($sign_rules[$total + 2])) {
+		$tomorrow_sign_credit = $sign_rules[$total + 2];
 	} else {
 		$tomorrow_sign_credit = $sign_set['everydaynum'];
 	}
