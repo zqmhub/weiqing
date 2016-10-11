@@ -224,7 +224,7 @@ function __secure_decode($post) {
 	}
 	$ret = iunserializer($data);
 	$string = ($ret['data'] . $_W['setting']['site']['token']);
-	if(md5($string) == $ret['sign']) {
+	if(md5($string) === $ret['sign']) {
 		return $ret['data'];
 	}
 	return false;
