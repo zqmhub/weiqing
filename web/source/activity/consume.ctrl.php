@@ -78,7 +78,11 @@ if($do == 'display') {
 	if (!empty($couponid)) {
 		$where .= " AND a.couponid = {$couponid}";
 	}
-
+	$clerk_id = intval($_GPC['clerk_id']);
+	if (!empty($clerk_id)) {
+		$where .= " AND a.clerk_id = :clerk_id";
+		$params[':clerk_id'] = $clerk_id;
+	}
 	if (!empty($_GPC['nickname'])) {
 		$nicknames = pdo_fetchall('SELECT * FROM '. tablename('mc_mapping_fans')." WHERE uniacid = :uniacid AND nickname LIKE :nickname", array(':uniacid' => $_W['uniacid'], ':nickname' => '%'.$_GPC['nickname'].'%'), 'openid');
 		$nickname = array_keys($nicknames);
