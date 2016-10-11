@@ -33,8 +33,7 @@ require.config({
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'raty': '../lib/raty.min',
 		'district' : '../lib/district',
-		'hammer': '../lib/hammer.min',
-		'layer' : '../lib/layer'
+		'hammer': '../lib/hammer.min'
 	},
 	shim:{
 		'jquery.ui': {
@@ -128,10 +127,6 @@ require.config({
 		},
 		'hammer' : {
 			exports : 'hammer'
-		},
-		'layer' : {
-			exports : 'layer',
-			deps : ['css!../lib/skin/layer.css', 'jquery']
 		}
 	}
 });

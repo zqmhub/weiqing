@@ -45,9 +45,6 @@ if ($do == 'check') {
 	}
 	$obj->uniacid = $_W['uniacid'];
 	$obj->acid = $_W['acid'];
-	$obj->message = array(
-		'event' => 'subscribe'
-	);
 	if(method_exists($obj, 'receive')) {
 		@$obj->receive();
 		exit('success');

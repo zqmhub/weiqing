@@ -48,7 +48,7 @@
 			{/if}
 			{if $card_setting['status'] == '1'}
 			<li class="mui-table-view-cell">
-				<a href="javascript:;" id="member_card" class="mui-navigate-right">
+				<a href="{php echo url('mc/card/mycard') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">
 					会员卡
 				</a>
 			</li>
@@ -88,17 +88,11 @@
 		{/loop}
 		</ul>
 		{/if}
-		<div style="position:relative;">
-			{$ucpage['html']}
-		</div>
+		{$ucpage['html']}
 	</div>
 {/if}
 
 <script type="text/javascript">
-	$('#member_card').click(function() {
-		util.loading();
-		util.card();
-	});
 	wx.ready(function(){
 		$('#scanqrcode').click(function(){
 			wx.scanQRCode({

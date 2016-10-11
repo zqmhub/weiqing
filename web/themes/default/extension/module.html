@@ -1,3 +1,4 @@
+{php $newUI = true;}
 {template 'common/header-gw'}
 <script type="text/javascript">
 	require(['domReady'], function(dom){
@@ -37,11 +38,6 @@
 	<div class="form">
 		<h5 class="page-header">已安装的模块</h5>
 	</div>
-	<div style="margin-bottom:15px;">
-		<input type="checkbox" id="batch-checkbox" style="margin-left:20px;" disabled> <label for="batch-checkbox" style="margin-left:5px;font-weight:normal;">全选</label>
-		<button class="btn btn-primary" style="margin-left:20px;" id="batch-upgrade" disabled>批量更新</button>
-		<span class="alert alert-warning" role="alert" style="padding: 7px 20px 10px 20px;margin-left:10px;">后台正在检测模块更新信息，暂不可点击 “批量更新” 按钮，请稍后</span>
-	</div>
 	<nav role="navigation" class="navbar navbar-default" style="margin-bottom:20px;">
 		<div class="container-fluid">
 			<div class="navbar-header"><a href="" class="navbar-brand">模块类型</a></div>
@@ -61,8 +57,8 @@
 	<div class="module form-horizontal">
 		{loop $modules $row}
 		<div class="item" data-title={$row['title']} data-type={$row['type']}>
-			<div class="media" style="position:relative;">
-				<div class="pull-right" style="width:500px;position:relative;z-index:100;">
+			<div class="media">
+				<div class="pull-right" style="width:500px;">
 					<div class="input-prepend">
 					</div>
 					<div class="module-set">
@@ -85,22 +81,19 @@
 						</span>
 					</div>
 				</div>
-				{if $row['upgrade']}<input type="checkbox" class="upgrade-module" style="float:left;position:absolute;left:20px;top:12px;" data-name="{$row['name']}" data-cloud="0">{/if}
-				<div style="position: relative;left: 53px;">
-					<img class="media-object img-rounded" src="{$row['imgsrc']}" onerror="this.src='../web/resource/images/nopic-small.jpg'">
-					<div class="media-body">
-						<h4 class="media-heading">
-							{$row['title']}<small>（标识：{$row['name']}&nbsp;&nbsp;&nbsp;版本：{$row['version']}&nbsp;&nbsp;&nbsp;作者：{$row['author']}）</small>
-							<em class="upgrade-label-tips" module="{$row['name']}" style="color:red;display:none;">New</em>
-							{if $row['official']}
-							<i class="official" style="position:absolute;"><img src="resource/images/module/official.png"/></i>
-							{/if}
-						</h4>
-						<span>
-							{$row['ability']}&nbsp;<a href="#" class="media-description-button">详细介绍</a>
-							<a href="javascript:;" class="edit-info" data-module="{$row['name']}"><i class="fa fa-pencil"></i> 点我编辑</a>
-						</span>
-					</div>
+				<img class="media-object img-rounded" src="{$row['imgsrc']}" onerror="this.src='../web/resource/images/nopic-small.jpg'">
+				<div class="media-body">
+					<h4 class="media-heading">
+						{$row['title']}<small>（标识：{$row['name']}&nbsp;&nbsp;&nbsp;版本：{$row['version']}&nbsp;&nbsp;&nbsp;作者：{$row['author']}）</small>
+						<em class="upgrade-label-tips" module="{$row['name']}" style="color:red;display:none;">New</em>
+						{if $row['official']}
+						<i class="official" style="position:absolute;"><img src="resource/images/module/official.png"/></i>
+						{/if}
+					</h4>
+					<span>
+						{$row['ability']}&nbsp;<a href="#" class="media-description-button">详细介绍</a>
+						<a href="javascript:;" class="edit-info" data-module="{$row['name']}"><i class="fa fa-pencil"></i> 点我编辑</a>
+					</span>
 				</div>
 			</div>
 			<div class="media-description">
@@ -239,14 +232,13 @@
 					$('.upgrade-label').each(function() {
 						var n = $(this).attr('module');
 						var v = $(this).attr('version');
-						
 						if ($.inArray(n, sys) > -1) {
 							$('.hide-form[id="' + n + '"]').html('<span class="label label-primary">来自系统安装</span>').show();
 						} else if ($.inArray(n, modules.pirate_apps) > -1) {
 							$('.hide-form[id="' + n + '"]').html('<span class="label label-danger">来自非法渠道</span>').show();
 						} else {
 							if (typeof modules[n] != 'undefined') {
-								$('.hide-form[id="' + n + '"]').html('<span class="label label-warning">来自云平台'+(modules[n]['trade'] ? '购买' : '')+'安装</span>').show();
+								$('.hide-form[id="' + n + '"]').html('<span class="label label-warning">来自云平台安装</span>').show();
 								if (modules[n].site_branch != null) {
 									var branches = modules[n].branches;
 									var site_branch_sort = parseInt(modules[n].site_branch.displayorder);
@@ -264,45 +256,14 @@
 											var tips = '来自微擎云服务更新';
 											$(this).html('<a href="javascript:;" onclick=\'setModuleInfo("' + modules[n].name + '", "' + v +'");\' style="color:red;" title="' + tips + '">更新</a>');
 											$('.upgrade-label-tips[module=' + n + ']').show();
-											// 同分支+当前版本<分支最大版本，显示checkbox
-											if( (parseInt(branches[index].displayorder) == site_branch_sort) && (parseInt(branches[index].version) > parseInt(site_current_version) ) && ($(this).parents('.item:eq(0)').find(':checkbox').length == 0) ){
-												$(this).parents('.pull-right').after('<input type="checkbox" class="upgrade-module" style="float:left;position:absolute;left:20px;top:12px;" data-name="'+n+'" data-cloud="1">');
-											}
 											break;
 										}
 									}
-								}
-								
-								if (modules[n]['develop'] && !modules[n]['trade']) {
-									$('.hide-form[id="' + n + '"]').html('<span class="label label-warning">云平台模块开发安装</span>').show();
 								}
 							} else {
 								$('.hide-form[id="' + n + '"]').html('<span class="label label-success">来自本地安装</span>').show();
 							}
 						}
-					});
-					$('#batch-checkbox').attr('disabled', false);
-					$('#batch-upgrade').attr('disabled', false).next().text('勾选免费升级的应用，点击 “批量更新” 按钮，进行批量升级');
-					$('#batch-checkbox').click(function(){
-						if($(this).data('is-checked')){
-							$(this).data('is-checked', false)
-							$('.upgrade-module').prop('checked', false);
-						}else{
-							$(this).data('is-checked', true)
-							$('.upgrade-module').prop('checked', true);
-						}
-					});
-					$('#batch-upgrade').click(function(){
-						var checkedModules = $('.upgrade-module:checked');
-						if(checkedModules.length < 1){
-							util.message('未勾选模块');
-							return false;
-						}
-						var upgrade_modules = '';
-						for(var i = 0, length = checkedModules.length ; i < length ; i++){
-							upgrade_modules+=checkedModules.eq(i).data('name')+'|'+checkedModules.eq(i).data('cloud')+'-';
-						}
-						location.href="{php echo url('extension/module/upgrade')}"+"&batch=1&batch_init=1&upgrade_modules="+ upgrade_modules.substr(0, upgrade_modules.length-1);
 					});
 				} catch(err) {}
 			}, 'json');
@@ -355,10 +316,10 @@
 									branch_info += '<a href="javascript:;" class="btn btn-default">已是最新版，无需升级</a></div></div>';
 								}
 							}
-
+							
 							branch_info += '<div class="input-group help-block col-sm-12 module-upgrade-info">' +
-							'<div class="col-sm-12">' + module_branches[branch].version.description + '</div>' +
-							'</div>';
+												'<div class="col-sm-12">' + module_branches[branch].version.description + '</div>' +
+											'</div>';
 						}
 						$('#js-module-name').text(response.message.title);
 						$('#js-module-branch').html(branch_info);
@@ -402,33 +363,33 @@
 			<h5 class="page-header" ng-show="modules.length > 0">已购买的模块</h5>
 		</div>
 		<div class="module form-horizontal ng-cloak">
-			<div class="item" ng-repeat="m in modules">
-				<div class="media">
-					<div class="pull-right" style="width:230px;">
-						<div class="module-set">
-							{if empty($status)}
-							<a href="{php echo url('extension/module/install')}m={{m.name.toLowerCase()}}">安装</a>
+		<div class="item" ng-repeat="m in modules">
+			<div class="media">
+				<div class="pull-right" style="width:230px;">
+					<div class="module-set">
+						{if empty($status)}
+						<a href="{php echo url('extension/module/install')}m={{m.name.toLowerCase()}}">安装</a>
 							<a href="http://s.we7.cc/index.php?c=store&a=application&id={{m.id}}" target="_blank">查看详情</a>
-							<a href="{php echo url('extension/module/recycle', array('op' => 'delete'))}&name={{m.name}}">放入回收站</a>
-							&nbsp;
-							{else}
-							<a href="{php echo url('extension/module/recycle', array('op' => 'recover'))}&name={{m.name}}" style="margin-right: 20px;">恢复</a>
-							{/if}
-						</div>
-					</div>
-					<img class="media-object img-rounded gray" ng-src="{{m.thumb}}" onerror="this.src='../web/resource/images/nopic-small.jpg'">
-					<div class="media-body">
-						<h4 class="media-heading">
-							{{m.title}}<small>（标识：{{m.name}}&nbsp;&nbsp;&nbsp;版本：{{m.version}}&nbsp;&nbsp;&nbsp;作者：{{m.author}}）</small>
-						</h4>
-						<span>{{m.ability}}&nbsp;<a href="#" class="media-description-button">详细介绍</a></span >
+						<a href="{php echo url('extension/module/recycle', array('op' => 'delete'))}&name={{m.name}}">放入回收站</a>
+						&nbsp;
+						{else}
+						<a href="{php echo url('extension/module/recycle', array('op' => 'recover'))}&name={{m.name}}" style="margin-right: 20px;">恢复</a>
+						{/if}
 					</div>
 				</div>
-				<div class="media-description">
-					<b>功能介绍：</b>
-					<span>
-						{{m.description}}
-					</span>
+					<img class="media-object img-rounded gray" ng-src="{{m.thumb}}" onerror="this.src='../web/resource/images/nopic-small.jpg'">
+				<div class="media-body">
+					<h4 class="media-heading">
+						{{m.title}}<small>（标识：{{m.name}}&nbsp;&nbsp;&nbsp;版本：{{m.version}}&nbsp;&nbsp;&nbsp;作者：{{m.author}}）</small>
+					</h4>
+					<span>{{m.ability}}&nbsp;<a href="#" class="media-description-button">详细介绍</a></span >
+				</div>
+			</div>
+			<div class="media-description">
+				<b>功能介绍：</b>
+				<span>
+					{{m.description}}
+				</span>
 				</div>
 			</div>
 		</div>
@@ -541,49 +502,49 @@
 								}  catch(err) {}
 							});
 						});
-						angular.bootstrap(document, ['app']);
-						//处理批量安装模块
-						var module = {$prepare_module};
-						var module_title = {$prepare_module_title};
-						var total = module.length;
+			angular.bootstrap(document, ['app']);
+			//处理批量安装模块
+			var module = {$prepare_module};
+			var module_title = {$prepare_module_title};
+			var total = module.length;
 
-						var i = 1;
-						var fail = [];
-						var success = [];
+			var i = 1;
+			var fail = [];
+			var success = [];
 
-						var insta = function(){
-							var m_name = module.pop();
-							if(!m_name) {
-								util.message('本次成功安装' + success.length + '个模块.<br>安装失败' + fail.length + '个模块', "{php echo url('extension/module/installed')}", 'info');
-								return;
-							}
-							var pragress = i + '/' + total;
-							$('#m_name').html(module_title[m_name]);
-							$('#pragress').html(pragress);
+			var insta = function(){
+				var m_name = module.pop();
+				if(!m_name) {
+					util.message('本次成功安装' + success.length + '个模块.<br>安装失败' + fail.length + '个模块', "{php echo url('extension/module/installed')}", 'info');
+					return;
+				}
+				var pragress = i + '/' + total;
+				$('#m_name').html(module_title[m_name]);
+				$('#pragress').html(pragress);
 
-							$.post("{php echo url('extension/module/batch-install')}", {'m_name' : m_name}, function(data){
-								if(data == 'success') {
-									i++;
-									$('#module-' + m_name).slideUp();
-									success.push(module_title[m_name]);
-									setTimeout(function(){insta()}, 2000);
-								} else {
-									i++;
-									fail.push(module_title[m_name]);
-									$('#fail').html(fail.join('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')).parent().parent().show();
-									setTimeout(function(){insta()}, 2000);
-								}
-							});
-						}
+				$.post("{php echo url('extension/module/batch-install')}", {'m_name' : m_name}, function(data){
+					if(data == 'success') {
+						i++;
+						$('#module-' + m_name).slideUp();
+						success.push(module_title[m_name]);
+						setTimeout(function(){insta()}, 2000);
+					} else {
+						i++;
+						fail.push(module_title[m_name]);
+						$('#fail').html(fail.join('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')).parent().parent().show();
+						setTimeout(function(){insta()}, 2000);
+					}
+				});
+			}
 
-						$('#batch-install').click(function(){
-							if(!confirm('批量安装仅安装本地模块,不能安装行业模块,确定安装？')) {
-								return false;
-							}
-							$('#install-info').show();
-							insta();
-						});
-					});
+			$('#batch-install').click(function(){
+				if(!confirm('批量安装仅安装本地模块,不能安装行业模块,确定安装？')) {
+					return false;
+				}
+				$('#install-info').show();
+				insta();
+			});
+		});
 	</script>
 	{/if}
 	{if $do == 'recycle'}

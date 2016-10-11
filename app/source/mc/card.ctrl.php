@@ -4,19 +4,12 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('getext', 'sign_display', 'sign', 'sign_record', 'notice', 'sign_strategy', 'share', 'mycard', 'add_recharge', 'addnums', 'recharge_record', 'receive_card', 'personal_info', 'consume', 'activity_description');
+$dos = array('sign_display', 'sign', 'sign_record', 'notice', 'sign_strategy', 'share', 'mycard', 'add_recharge', 'addnums', 'recharge_record', 'receive_card', 'personal_info', 'consume');
 $do = in_array($do, $dos) ? $do : 'mycard';
 load()->model('user');
 load()->model('card');
 load()->func('tpl');
 activity_coupon_type_init();
-if ($do == 'getext') {
-	load()->classs('coupon');
-	$coupon_api = new coupon();
-	$card_id = trim($_GPC['card_id']);
-	$result = $coupon_api->BuildCardExt($card_id, '', 'membercard');
-	message(error(0, $result['card_ext']), '', 'ajax');
-}
 //未读取的消息条数
 $notice_count = card_notice_stat();
 $setting = pdo_get('mc_card', array('uniacid' => $_W['uniacid']));
@@ -124,31 +117,7 @@ if($do == 'notice') {
 /*会员卡中心*/
 if ($do == 'receive_card') {
 	$mcard = pdo_get('mc_card_members', array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']), array('id'));
-	if(!empty($mcard) && $_GPC['card_status'] != 1) {
-		if ($_GPC['card_type'] == WECHAT_COUPON) {
-			load()->classs('coupon');
-			$coupon_api = new coupon();
-			$card = pdo_get('mc_card', array('uniacid' => $_W['uniacid']));
-			$code = pdo_getcolumn('coupon_record', array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'card_id' => $card['card_id']), 'code');
-			$member = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
-			$grant = iunserializer($card['grant']);
-			$credit1 = $grant['credit1'];
-			$data = array(
-				'card_id' => $card['card_id'],
-				'membership_number' => $member['mobile'],
-				'code' => $code,
-				'init_bonus' => $member['credit1'] - $credit1,
-				'init_balance' => $member['credit2']*100
-			);
-			$result = $coupon_api->activateMemberCard($data);
-			if ($result['errmsg'] == 'ok') {
-				$url = url('mc/card/receive_card', array('card_status' => '1'));
-				header('Location: '.$url);
-			} else {
-				message('会员卡激活失败，失败原因：'.$result['message'], url('mc/card/receive_card', array('card_status' => '1')), 'error');
-			}
-			exit;
-		}
+	if(!empty($mcard)) {
 		header('Location:' . url('mc/card/mycard'));
 		exit;
 	}
@@ -282,27 +251,6 @@ if ($do == 'receive_card') {
 			$info = "您在{$time}成功领取会员卡，{$notice}。\n\n";
 			$info .= "<a href='{$url}'>点击查看详情</a>";
 			$status = mc_notice_custom_text($_W['openid'], $title, $info);
-			if ($_GPC['card_type'] == WECHAT_COUPON) {
-				load()->classs('coupon');
-				$coupon_api = new coupon();
-				$card = $setting;
-				$code = pdo_getcolumn('coupon_record', array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'card_id' => $card['card_id']), 'code');
-				$member = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
-				$credit1 = $grant['credit1'];
-				$data = array(
-					'card_id' => $card['card_id'],
-					'membership_number' => $member['mobile'],
-					'code' => $code,
-					'init_bonus' => $member['credit1'] - $credit1,
-					'init_balance' => $member['credit2']*100
-				);
-				$result = $coupon_api->activateMemberCard($data);
-				if ($result['errmsg'] == 'ok') {
-					message('会员卡激活成功', url('mc/card/receive_card', array('card_status' => '1')), 'success');
-				} else {
-					message('会员卡激活失败，失败原因：'.$result['message'], url('mc/card/receive_card', array('card_status' => '1')), 'error');
-				}
-			}
 			message("领取会员卡成功", url('mc/card/mycard'), 'success');
 		} else {
 			message('领取会员卡失败.', referer(), 'error');

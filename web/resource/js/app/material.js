@@ -1,18 +1,15 @@
-define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.jplayer'], function($, _){
+define(['jquery', 'underscore', 'bootstrap', 'jquery.wookmark', 'jquery.jplayer'], function($, _){
 	var material = {
 		'defaultoptions' : {
 			callback : null,
 			type : 'all',
 			multiple : false,
 			ignore : {
-				'basic' : false,
 				'wxcard' : true,
 				'image' : false,
-				'music' : false,
 				'news' : false,
 				'video' : false,
-				'voice' : false,
-				'keyword' : false
+				'voice' : false
 			}
 		},
 		'init' : function(callback, options) {
@@ -26,7 +23,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 			$this.modalobj.find('.modal-header .nav li a').click(function(){
 				var type = $(this).data('type');
 				$this.localPage(type, 1);
-				$(this).tab('show');
+				$(this).tab('show')
 				return false;
 			});
 			if (!$(this).data('init')) {
@@ -45,25 +42,9 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 			$('.checkMedia').removeClass('checkedMedia');
 			var $content = $this.modalobj.find('.material-content #' + type);
 			$content.html('<div class="info text-center"><i class="fa fa-spinner fa-pulse fa-lg"></i> 数据加载中</div>');
-
-			if(type == 'basic') {
-				var Dialog = type + 'Dialog';
-				$this.modalobj.find('#btn-select').show();
-				$content.html(_.template($this.buildHtml()[Dialog]));
-				$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
-					var attachment = [];
-					attachment.content = $('#basictext').val();
-					$this.options.callback(attachment);
-					$this.modalobj.modal('hide');
-				});
-				return false;
-			}
 			var url = './index.php?c=utility&a=material&do=list&type=' + type;
 			if(type == 'wxcard') {
 				url = './index.php?c=utility&a=coupon&do=wechat';
-			}
-			if(type == 'keyword') {
-				url = './index.php?c=utility&a=keyword&do=keyword&type=all';
 			}
 			$.getJSON(url, {'page': page}, function(data){
 				data = data.message;
@@ -93,8 +74,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				} else {
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
 				}
-			});				
-
+			});
 			$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
@@ -190,17 +170,11 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\n' +
 				'				<h3>'+
 				'					<ul role="tablist" class="nav nav-pills" style="font-size:14px; margin-top:-20px;">'+
-				'						<li role="presentation" class="basic ' + (this.options.ignore.basic ? 'hide' : 'show') + '">'+
-				'							<a data-toggle="tab" data-type="basic" role="tab" aria-controls="baisc" href="#basic">文字</a>'+
-				'						</li>'+
 				'						<li role="presentation" class="news ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
 				'							<a data-toggle="tab" data-type="news" role="tab" aria-controls="news" href="#news">图文</a>'+
 				'						</li>'+
 				'						<li role="presentation" class="image ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
 				'							<a data-toggle="tab" data-type="image" role="tab" aria-controls="image" href="#image">图片</a>'+
-				'						</li>'+
-				'						<li role="presentation" class="music ' + (this.options.ignore.music ? 'hide' : 'show') + '">'+
-				'							<a data-toggle="tab" data-type="music" role="tab" aria-controls="music" href="#music">音乐</a>'+
 				'						</li>'+
 				'						<li role="presentation" class="voice ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
 				'							<a data-toggle="tab" data-type="voice" role="tab" aria-controls="voice" href="#voice">语音</a>'+
@@ -211,43 +185,16 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						<li role="presentation" class="wxcard ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
 				'							<a data-toggle="tab" data-type="wxcard" role="tab" aria-controls="wxcard" href="#wxcard">微信卡券</a>'+
 				'						</li>'+
-				'						<li role="presentation" class="keyword ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
-				'							<a data-toggle="tab" data-type="keyword" role="tab" aria-controls="keyword" href="#keyword">关键字</a>'+
-				'						</li>'+
 				'					</ul>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=post&do=news" target="_blank">新建图文</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=image" target="_blank">上传图片</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.music ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=music" target="_blank">上传音乐</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=video" target="_blank">新建视频</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=autoreply&do=post&m=autoreply" target="_blank">新建关键字</a>'+
-				'					</button>'+
 				'				</h3>'+
 				'			</div>\n' +
 				'			<div class="modal-body material-content">\n' +
 				'				<div class="tab-content">'+
-				'					<div id="basic" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="news" class="tab-pane material clearfix" class="active" role="tabpanel" style="position:relative"></div>'+
 				'					<div id="image" class="tab-pane history" role="tabpanel"></div>'+
-				'					<div id="music" class="tab-pane history" role="tabpanel"></div>'+
 				'					<div id="voice" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="video" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="wxcard" class="tab-pane" role="tabpanel"></div>'+
-				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
 				'				</div>' +
 				'			</div>\n' +
 				'			<div class="modal-footer">\n' +
@@ -264,13 +211,6 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'	</div>\n' +
 				'</div>';
 
-			dialog['basicDialog'] = '<textarea id="basictext" cols="120" rows="10"></textarea>'+
-				'						<div class="help-block">'+
-				'							您还可以使用表情和链接。'+
-				'							<a class="emotion-triggers" href="javascript:;" onclick="initSelectEmotion();"><i class="fa fa-github-alt"></i> 表情</a>'+
-				'							<a class="emoji-triggers" href="javascript:;" onclick="initSelectEmoji()" title="添加表情"><i class="fa fa-github-alt"></i> Emoji</a>'+
-				'						</div>';
-
 			dialog['imageDialog'] = '<ul class="img-list clearfix">\n' +
 				'<%var items = _.sortBy(items, function(item) {return -item.id;});%>' +
 				'<%_.each(items, function(item) {%> \n' +
@@ -284,40 +224,12 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'<%});%>\n' +
 				'</ul>';
 
-			dialog['musicDialog'] = '<ul class="img-list clearfix">\n' +
-				'<%var items = _.sortBy(items, function(item) {return -item.id;});%>' +
-				'<%_.each(items, function(item) {%> \n' +
-				'<div class="checkMedia" data-media="<%=item.media_id%>" data-type="image" data-attachid="<%=item.id%>">' +
-				'	<li class="img-item" style="padding:5px">\n' +
-				'		<div class="img-container" style="background-image: url(\'<%=item.attach%>\');">\n' +
-				'			<div class="select-status"><span></span></div>\n' +
-				'		</div>\n' +
-				'	</li>\n' +
-				'</div>\n' +
-				'<%});%>\n' +
-				'</ul>'+
-				'<div class="input-group">'+
-				'<input type="text" value="" name="" class="form-control audio-player-media" autocomplete="off")>'+
-				'<span class="input-group-btn">'+
-				'<button class="btn btn-default audio-player-play" type="button" style="display:none;"><i class="fa fa-play"></i></button>'+
-				'<button class="btn btn-default" type="button" onclick="showAudioDialog(this, ,);">选择媒体文件</button>'+
-				'</span>'+
-				'</div>'+
-				'<div class="input-group audio-player"></div>';
-
-		
-		
-			
-			
-		
-	
-	
 			dialog['voiceDialog'] ='<table class="table table-hover table-bordered" style="margin-bottom:0">'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
 				'								<th>标题</th>'+
-				'								<th style="width:20%;text-align:center">创建时间</th>'+
-				'								<th style="width:15%;text-align:center"></th>'+
+				'								<th style="width:20%;text-align:right">创建时间</th>'+
+				'								<th style="width:20%;text-align:right"></th>'+
 				'							</tr>'+
 				'							</thead>'+
 				'							<tbody class="history-content">'+
@@ -325,8 +237,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'							<%_.each(items, function(item) {%> \n' +
 				'							<tr>'+
 				'								<td><%=item.filename%></td>'+
-				'								<td align="center"><%=item.createtime_cn%></td>'+
-				'								<td align="center">'+
+				'								<td align="right"><%=item.createtime_cn%></td>'+
+				'								<td align="right">'+
 				'									<div class="btn-group">'+
 				'										<a href="javascript:;" class="btn btn-default btn-sm audio-player-play audio-msg" data-attach="<%=item.attach%>"><i class="fa fa-play"></i></a>'+
 				'										<a href="javascript:;" class="btn btn-default btn-sm checkMedia" data-media="<%=item.media_id%>" data-type="voice" data-attachid="<%=item.id%>">选取</a>'+
@@ -341,8 +253,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
 				'								<th>标题</th>'+
-				'								<th style="width:20%;text-align:center">创建时间</th>'+
-				'								<th style="width:10%;text-align:center"></th>'+
+				'								<th style="width:20%;text-align:right">创建时间</th>'+
+				'								<th style="width:20%;text-align:right"></th>'+
 				'							</tr>'+
 				'							</thead>'+
 				'							<tbody class="history-content">'+
@@ -351,8 +263,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'							<tr>'+
 				'								<%if(item.tag.title) {var title = item.tag.title} else {var title =item.filename}%>'+
 				'								<td><%=title%></td>'+
-				'								<td align="center"><%=item.createtime_cn%></td>'+
-				'								<td align="center">'+
+				'								<td align="right"><%=item.createtime_cn%></td>'+
+				'								<td align="right">'+
 				'									<div class="btn-group">'+
 				'										<a href="javascript:;" class="btn btn-default btn-sm checkMedia" data-media="<%=item.media_id%>" data-type="video" data-attachid="<%=item.id%>">选取</a>'+
 				'									</div>'+
@@ -420,99 +332,9 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</div>'+
 				'					</div>'+
 				'					<%});%>';
-			dialog['keywordDialog'] = '<table class="table table-hover table-bordered" style="margin-bottom:0">'+
-				'						<thead class="navbar-inner">'+
-				'							<tr>'+
-				'								<th style="width:20%;text-align:center">规则名</th>'+
-				'								<th style="width:50%;text-align:center">关键词</th>'+
-				'								<th style="width:10%;text-align:center">优先级</th>'+
-				'								<th style="width:10%;text-align:center"></th>'+
-				'							</tr>'+
-				'						</thead>'+
-				'						<tbody class="history-content">'+
-				'							<%_.each(items, function(item) {%> \n' +
-				'							<tr>'+
-				'								<td align="center"><%=item.name%></td>'+
-				'								<td align="center"><%_.each(item.child_items, function(child_item) {%>'+
-				'										&nbsp;&nbsp;<%=child_item.content%>'+
-				'								<%})%></td>'+
-				'								<td align="center"><%if(item.displayorder == "255"){%>置顶<%} else {%> <%=item.displayorder%> <%}%></td>'+
-				'								<td align="center">'+
-				'									<div class="btn-group">'+
-				'										<a href="javascript:;" class="btn btn-default btn-sm checkMedia" data-media="<%=item.media_id%>" data-type="video" data-attachid="<%=item.id%>">选取</a>'+
-				'									</div>'+
-				'								</td>'+
-				'							</tr>'+
-				'							<%});%>' +
-				'						</tbody>'+
-				'					</table>';
 
 			return dialog;
 		}
-	};
-	initSelectEmotion = function() {
-		var textbox = $("#basictext").val();
-		util.emotion($('.emotion-triggers'), $("#basictext"), function(txt, elm, target){
-			$("#basictext").val(textbox+txt);
-		});
-	};
-	initSelectEmoji = function() {
-		var textbox = $("#basictext").val();
-		util.emojiBrowser(function(emoji){
-			var unshift = '[U+' + emoji.find("span").text() + ']';
-			$("#basictext").val(textbox+unshift);
-		});
-	};
-	showAudioDialog = function(elm, base64options, options) {
-		// require(["util"], function(util){
-			var btn = $(elm);
-			var ipt = btn.parent().prev();
-			var val = ipt.val();
-			util.audio(val, function(url){
-				if(url && url.attachment && url.url){
-					btn.prev().show();
-					ipt.val(url.attachment);
-					ipt.attr("filename",url.filename);
-					ipt.attr("url",url.url);
-					setAudioPlayer();
-				}
-				if(url && url.media_id){
-					ipt.val(url.media_id);
-				}
-			}, "" , "");
-		// });
-	};
-	setAudioPlayer = function(){
-		// require(["jquery", "util", "jquery.jplayer"], function($, u){
-			$(function(){
-				$(".audio-player").each(function(){
-					$(this).prev().find("button").eq(0).click(function(){
-						var src = $(this).parent().prev().val();
-						if($(this).find("i").hasClass("fa-stop")) {
-							$(this).parent().parent().next().jPlayer("stop");
-						} else {
-							if(src) {
-								$(this).parent().parent().next().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
-							}
-						}
-					});
-				});
-
-				$(".audio-player").jPlayer({
-					playing: function() {
-						$(this).prev().find("i").removeClass("fa-play").addClass("fa-stop");
-					},
-					pause: function (event) {
-						$(this).prev().find("i").removeClass("fa-stop").addClass("fa-play");
-					},
-					swfPath: "resource/components/jplayer",
-					supplied: "mp3"
-				});
-				$(".audio-player-media").each(function(){
-					$(this).next().find(".audio-player-play").css("display", $(this).val() == "" ? "none" : "");
-				});
-			});
-		// });
 	};
 	return material;
 });

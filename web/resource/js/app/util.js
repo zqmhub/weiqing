@@ -1,25 +1,24 @@
 (function(window) {
 	var util = {};
 	util.tomedia = function(src, forcelocal){
-		if(!src) {
-			return '';
-		}
-		if(src.indexOf('./addons') == 0) {
-			return window.sysinfo.siteroot + src.replace('./', '');
-		}
-		if(src.indexOf(window.sysinfo.siteroot) != -1 && src.indexOf('/addons/') == -1) {
-			src = src.substr(src.indexOf('images/'));
-		}
-		var t = src.toLowerCase();
-		if(t.indexOf('http://') != -1 || t.indexOf('https://') != -1 ) {
+		if(src.indexOf('http://') == 0 || src.indexOf('https://') == 0 || src.indexOf('./resource') == 0) {
 			return src;
-		}
-		if(forcelocal || !window.sysinfo.attachurl_remote) {
-			src = window.sysinfo.attachurl_local + src;
+		} else if(src.indexOf('./addons') == 0) {
+			var url=window.document.location.href; 
+			var pathName = window.document.location.pathname; 
+			var pos = url.indexOf(pathName); 
+			var host = url.substring(0,pos);
+			if (src.substr(0,1)=='.') {
+				src=src.substr(1);
+			}
+			return host + src;
 		} else {
-			src = window.sysinfo.attachurl_remote + src;
+			if(!forcelocal) {
+				return window.sysinfo.attachurl + src;
+			} else {
+				return window.sysinfo.attachurl_local + src;
+			}
 		}
-		return src;
 	};
 	util.clip = function(elm, str) {
 		if(elm.clip) {

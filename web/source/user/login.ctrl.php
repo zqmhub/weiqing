@@ -72,7 +72,7 @@ function _login($forward = '') {
 			isetcookie('__uid', $record['uid'], 7 * 86400);
 			
 			if($_W['role'] == 'clerk' || $role == 'clerk') {
-				message('登陆成功', url('paycenter/desk', array('uniacid' => $record['uniacid'])), 'success');
+				message('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
 			}
 		}
 		if(empty($forward)) {

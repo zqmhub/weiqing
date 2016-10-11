@@ -571,26 +571,14 @@ class WeEngine {
 		$message['redirection'] = true;
 		if(!empty($message['scene'])) {
 			$message['source'] = 'qr';
-			$ticket = trim($message['ticket']);
-			if(!empty($ticket)) {
-				$qr = pdo_fetchall("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE `uniacid` = '{$_W['uniacid']}' AND ticket = '{$ticket}'");
-				if(!empty($qr)) {
-					if(count($qr) != 1) {
-						$qr = array();
-					} else {
-						$qr = $qr[0];
-					}
-				}
+			$sceneid = trim($message['scene']);
+			$scene_condition = '';
+			if (is_numeric($sceneid)) {
+				$scene_condition = " `qrcid` = '{$sceneid}'";
+			}else{
+				$scene_condition = " `scene_str` = '{$sceneid}'";
 			}
-			if(empty($qr)) {
-				$sceneid = trim($message['scene']);
-				if(is_numeric($sceneid)) {
-					$scene_condition = " `qrcid` = '{$sceneid}'";
-				} else {
-					$scene_condition = " `scene_str` = '{$sceneid}'";
-				}
-				$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE `uniacid` = '{$_W['uniacid']}' AND {$scene_condition}");
-			}
+			$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE {$scene_condition} AND `uniacid` = '{$_W['uniacid']}'");
 			if(!empty($qr)) {
 				$message['content'] = $qr['keyword'];
 				$params += $this->analyzeText($message);
@@ -614,26 +602,14 @@ class WeEngine {
 		$message['redirection'] = true;
 		if(!empty($message['scene'])) {
 			$message['source'] = 'qr';
-			$ticket = trim($message['ticket']);
-			if(!empty($ticket)) {
-				$qr = pdo_fetchall("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE `uniacid` = '{$_W['uniacid']}' AND ticket = '{$ticket}'");
-				if(!empty($qr)) {
-					if(count($qr) != 1) {
-						$qr = array();
-					} else {
-						$qr = $qr[0];
-					}
-				}
+			$sceneid = trim($message['scene']);
+			$scene_condition = '';
+			if (is_numeric($sceneid)) {
+				$scene_condition = " `qrcid` = '{$sceneid}'";
+			}else{
+				$scene_condition = " `scene_str` = '{$sceneid}'";
 			}
-			if(empty($qr)) {
-				$sceneid = trim($message['scene']);
-				if(is_numeric($sceneid)) {
-					$scene_condition = " `qrcid` = '{$sceneid}'";
-				} else {
-					$scene_condition = " `scene_str` = '{$sceneid}'";
-				}
-				$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE `uniacid` = '{$_W['uniacid']}' AND {$scene_condition}");
-			}
+			$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE {$scene_condition} AND `uniacid` = '{$_W['uniacid']}'");
 			if(!empty($qr)) {
 				$message['content'] = $qr['keyword'];
 				$params += $this->analyzeText($message);
