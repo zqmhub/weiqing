@@ -253,7 +253,7 @@
 						$scope.context.groups[$scope.context.activeGroupIndex][index].thumb = imgs.url;
 						$scope.$apply()
 					}
-				}, {'direct' : true, 'multiple' : false});
+				}, {'direct' : true, 'multiple' : false, fileSizeLimit : {php echo intval($_W['setting']['upload']['image']['limit']) * 1024}});
 			});
 		};
 

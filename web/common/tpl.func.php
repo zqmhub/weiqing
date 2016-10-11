@@ -376,6 +376,7 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = arra
 	if (isset($options['thumb'])) {
 		$options['thumb'] = !empty($options['thumb']);
 	}
+	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
 	$s = '';
 	if (!defined('TPL_INIT_IMAGE')) {
 		$s = '
@@ -440,6 +441,7 @@ function tpl_form_field_multi_image($name, $value = array(), $options = array())
 	global $_W;
 	$options['multiple'] = true;
 	$options['direct'] = false;
+	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
 	$s = '';
 	if (!defined('TPL_INIT_MULTI_IMAGE')) {
 		$s = '
@@ -499,6 +501,7 @@ function tpl_form_field_audio($name, $value = '', $options = array()) {
 	}
 	$options['direct'] = true;
 	$options['multiple'] = false;
+	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024;
 	$s = '';
 	if (!defined('TPL_INIT_AUDIO')) {
 		$s = '
@@ -583,6 +586,7 @@ function tpl_form_field_multi_audio($name, $value = array(), $options = array())
 	$s = '';
 	$options['direct'] = false;
 	$options['multiple'] = true;
+	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024;
 
 	if (!defined('TPL_INIT_MULTI_AUDIO')) {
 		$s .= '
@@ -689,6 +693,7 @@ function tpl_form_field_video($name, $value = '', $options = array()) {
 	$options['direct'] = true;
 	$options['multi'] = false;
 	$options['type'] = 'video';
+	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024;
 	$s = '';
 	if (!defined('TPL_INIT_VIDEO')) {
 		$s = '
@@ -1085,31 +1090,6 @@ function tpl_form_field_location_category($name, $values = array(), $del = false
 	return $html;
 }
 
-/**
- * 用于设计wap页面编辑器
- *
- */
-function tpl_wappage_editor($editorparams = '', $editormodules = array()) {
-	global $_GPC;
-	$content = '';
-	load()->func('file');
-	$filetree = file_tree(IA_ROOT . '/web/themes/default/wapeditor');
-	if (!empty($filetree)) {
-		foreach ($filetree as $file) {
-			if (strexists($file, 'widget-')) {
-				$fileinfo = pathinfo($file);
-				$_GPC['iseditor'] = false;
-				$display = template('wapeditor/'.$fileinfo['filename'], TEMPLATE_FETCH);
-				$_GPC['iseditor'] = true;
-				$editor = template('wapeditor/'.$fileinfo['filename'], TEMPLATE_FETCH);
-				$content .= "<script type=\"text/ng-template\" id=\"{$fileinfo['filename']}-display.html\">".str_replace(array("\r\n", "\n", "\t"), '', $display)."</script>";
-				$content .= "<script type=\"text/ng-template\" id=\"{$fileinfo['filename']}-editor.html\">".str_replace(array("\r\n", "\n", "\t"), '', $editor)."</script>";
-			}
-		}
-	}
-	return $content;
-}
-
 /*
  * 百度富文本编辑器
  * @param $id 表单input名称
@@ -1152,7 +1132,8 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 				dest_dir : '',
 				global : false,
 				thumb : false,
-				width : 0
+				width : 0,
+				fileSizeLimit : ".(intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024)."
 			};
 			UE.registerUI('myinsertimage',function(editor,uiName){
 				editor.registerCommand(uiName, {
@@ -1204,6 +1185,7 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 				});
 				return btn;
 			}, 19);
+			
 			UE.registerUI('myinsertvideo',function(editor,uiName){
 				editor.registerCommand(uiName, {
 					execCommand:function(){
@@ -1219,7 +1201,7 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 										'height' : 200
 									}, videoType);
 								}
-							}, {type : 'video', allowUploadVideo : ".($options['allow_upload_video'] ? 'true' : 'false')."});
+							}, {fileSizeLimit : ".(intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024).", type : 'video', allowUploadVideo : ".($options['allow_upload_video'] ? 'true' : 'false')."});
 						});
 					}
 				});
