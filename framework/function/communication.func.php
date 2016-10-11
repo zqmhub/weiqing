@@ -47,7 +47,7 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 				$filepost = false;
 				// 5.6版本后，'@'上传，使用CURLFile替代
 				foreach ($post as $name => &$value) {
-					if (ver_compare(phpversion(), '5.6') >= 0 && substr($value, 0, 1) == '@') {
+					if (version_compare(phpversion(), '5.6') >= 0 && substr($value, 0, 1) == '@') {
 						$value = new CURLFile(ltrim($value, '@'));
 					}
 					if ((is_string($value) && substr($value, 0, 1) == '@') || (class_exists('CURLFile') && $value instanceof CURLFile)) {
