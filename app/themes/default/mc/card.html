@@ -238,7 +238,7 @@
 <div class="mui-content">
 	<ul class="mui-table-view mui-table-view-chevron">
 		{if $activity_info['params']['discount_type'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			消费优惠信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -259,7 +259,7 @@
 		</div>
 		{/if}
 		{if $recharge_info['params']['recharge_type'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			充值优惠信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -278,7 +278,7 @@
 		</div>
 		{/if}
 		{if $nums_info['params']['nums_status'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			{$nums_info['params']['nums_text']}信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -300,7 +300,7 @@
 		</div>
 		{/if}
 		{if $times_info['params']['times_status'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			{$times_info['params']['times_text']}信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -324,7 +324,7 @@
 	</ul>
 </div>
 <script>
-	$('.mui-table-view-cell').click(function() {
+	$('.js-activity-descrpition').click(function() {
 		$(this).next().toggle();
 		$(this).find('span.fa').toggleClass('fa-angle-up');
 		$(this).find('span.fa').toggleClass('fa-angle-down');
