@@ -25,20 +25,22 @@ if($do == 'sign_display') {
 		$sign_set['third_group_day'] => $sign_set['third_group_num'],
 		$current_month_days => $sign_set['full_sign_num'],
 	);
-	if (!empty($sign_rules[$total + 1])) {
-		$today_sign_credit = $sign_rules[$total + 1];
+	if (!empty($sign_rules[$total])) {
+		$today_sign_credit = $sign_rules[$total];
 	} else {
 		$today_sign_credit = $sign_set['everydaynum'];
 	}
-	if (!empty($sign_rules[$total + 2])) {
-		$tomorrow_sign_credit = $sign_rules[$total + 2];
+	if (!empty($sign_rules[$total + 1])) {
+		$tomorrow_sign_credit = $sign_rules[$total + 1];
+		$sign_credit = $sign_rules[$total + 1];
 	} else {
 		$tomorrow_sign_credit = $sign_set['everydaynum'];
+		$sign_credit = $sign_set['everydaynum'];
 	}
 	$data = array(
 		'uniacid' => $_W['uniacid'],
 		'uid' => $_W['member']['uid'],
-		'credit' => $today_sign_credit,
+		'credit' => $sign_credit,
 		'is_grant' => 0,
 		'addtime' => TIMESTAMP,
 	);

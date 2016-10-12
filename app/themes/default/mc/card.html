@@ -509,14 +509,19 @@
 			{php }}
 		</div>
 	</div>
+	{if !empty($today_signed['id'])}
 	<div class="sign-record">今日已签到<span class="mui-big">+{$today_sign_credit}</span>积分</div>
 	<div class="mui-text-muted sign-tips mui-mt10">明日可得 <span>+{$tomorrow_sign_credit}</span>积分</div>
+	{/if}
 </div>
 <script>
 	$(function() {
 		today_signed = "{$today_signed['id']}";
 		if (!today_signed) {
 			util.toast('签到成功');
+			setTimeout(function(){
+				location.reload();
+			},2500);
 		}
 	})
 </script>
