@@ -361,7 +361,7 @@ if ($do == 'activity_description') {
 	$recharge_info = $params_new['cardRecharge'];
 	$nums_info = $params_new['cardNums'];
 	$times_info = $params_new['cardTimes'];
-	if ($activity_info['params']['discount_type'] == 0 || $recharge_info['params']['recharge_type'] == 0 || $nums_info['params']['nums_status'] == 0 || $times_info['params']['times_status'] == 0) {
+	if ($activity_info['params']['discount_type'] == 0 && $recharge_info['params']['recharge_type'] == 0 && $nums_info['params']['nums_status'] == 0 && $times_info['params']['times_status'] == 0) {
 		message('暂无优惠信息', referer(), 'error');
 	}
 	if ($activity_info['params']['discount_type'] != 0) {
