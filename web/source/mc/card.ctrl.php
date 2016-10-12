@@ -108,99 +108,36 @@ if($do == 'editor') {
 		if ($activity['grant_rate'] < 0) {
 			message('付款返积分比率不能为负数', referer(), 'error');
 		}
-		load()->classs('coupon');
-		$card_api = Card::create(COUPON_TYPE_MEMBER);
-		$card_api->logo_url = $basic['logo'];
-		$card_api->brand_name = $basic['brand_name'];
-		$card_api->title = $basic['title'];
-		$card_api->notice = $basic['notice'];
-		$card_api->description = $basic['description'];
-		$card_api->prerogative = '使用会员卡可打5折';
-		$card_api->get_limit = 1;
-		$card_api->color = $basic['color'];
-		$card_api->sku = array('quantity' => $basic['quantity']);
-		$card_api->location_id_list = $basic['location_id_list'];
-		$card_api->center_title = '付款';
-//		$card_api->background_pic_url = $basic['background']['image'];
-		$card_api->pay_info['swipe_card']['is_swipe_card'] = $basic['swipe_card'] == 1 ? true : false;
-		$card_api->center_url = $_W['siteroot'].'app/'.trim(murl('mc/bond/consume'), './').'&wxref=mp.weixin.qq.com#wechat_redirect';
-		$card_api->setPromotionMenu('消息', '', $_W['siteroot'].'app/'.trim(murl('mc/card/notice'), './').'&wxref=mp.weixin.qq.com#wechat_redirect');
-		$card_api->setCustomMenu('个人信息', '', $_W['siteroot'].'app/'.trim(murl('mc/card/personal_info'), './').'&wxref=mp.weixin.qq.com#wechat_redirect');
-		$card_api->custom_field1['url'] = $_W['siteroot'].'app/'.trim(murl('activity/coupon/=mine'), './');
-		$card_api->activate_url = $_W['siteroot'].'app/'.trim(murl('mc/card/receive_card', array('card_type' => WECHAT_COUPON)), './').'&wxref=mp.weixin.qq.com#wechat_redirect';
-		$card_api->balance_url = $_W['siteroot'].'app/'.trim(murl('entry', array('m' => 'recharge', 'do' => 'pay')), './').'&wxref=mp.weixin.qq.com#wechat_redirect';
-		$card_api->custom_cell1['url'] = $_W['siteroot'].'app/'.trim(murl('mc/bond/credits', array('credittype' => 'credit2', 'type' => 'record', 'period' => 1)), './').'&wxref=mp.weixin.qq.com#wechat_redirect';
-		if ($basic['date_info']['type'] == 'DATE_TYPE_PERMANENT') {
-			$card_api->date_info['type'] = 'DATE_TYPE_PERMANENT';
-		} elseif ($basic['date_info']['type'] == 'DATE_TYPE_FIX_TIME_RANGE') {
-			$card_api->setDateinfoRange($basic['date_info']['begin_timestamp'], $basic['date_info']['end_timestamp']);
-		} elseif ($basic['date_info']['type'] == 'DATE_TYPE_FIX_TERM') {
-			$card_api->setDateinfoFix($basic['fixed_begin_term'], $basic['fixed_term']);
-		}
-		$card_api->setBonusRule('100',$activity['grant_rate'], $basic['bonus_rule']['max_increase_bonus'],$basic['grant']['credit1'], $basic['offset_rate'], '100', $basic['bonus_rule']['least_money_to_use_bonus']*100, $basic['offset_max']*$basic['offset_rate']);
-		$error = $card_api->validate();
-		if (is_error($error)) {
-			message($error['message'], referer(), 'info');
-		}
-		$update = array();
-		if (COUPON_TYPE == WECHAT_COUPON) {
-			$card = $card_api->getCardData();
-			$coupon_api = new coupon();
-			if (empty($setting)) {
-				$result = $coupon_api->createcard($card);
-				if (is_error($result)) {
-					if (strexists($result['message'], 'invalid category to create card hint')) {
-						$card_api->source = 1;
-					} else {
-						message($result['message'], referer(), 'info');
-					}
-				} else {
-					$card_api->source = 2;
-					$card_api->card_id = $result['card_id'];
-				}
-			} else {
-				if ($setting['source'] == 1) {
-					$card_api->source = 1;
-				} else {
-					$card_api->card_id = $setting['card_id'];
-					$update_card = $card_api->getMemberCardUpdateArray();
-					$result = $coupon_api->updatemembercard($update_card);
-					if ($result['message'] != '') {
-						message('更改会员卡设置失败,失败原因:'.$result['message'], url('mc/card/editor'), 'error');
-					}
-					$card_api->source = 2;
-				}
-			}
-		} else {
-			$card_api->source = 1;
-		}
-		$first = strpos($activity['grant_rate'], '.');
-		if (!empty($first)) {
-			$grant_rate_arr = explode('.', $activity['grant_rate']);
-			if ($grant_rate_arr[1] == '0') {
-				$activity['grant_rate'] = $grant_rate_arr[0];
-			}
-		}
-		$card_api->format_type = $basic['format_type'];
-		$card_api->format = $format;
-		$card_api->offset_rate = intval($basic['offset_rate']);
-		$card_api->offset_max = intval($basic['offset_max']);
-		$card_api->discount_type = intval($activity['discount_type']);
-		$card_api->grant_rate = $activity['grant_rate'];
-		$card_api->fields = iserializer($fields);
-		$card_api->grant = iserializer(
-			array(
-				'credit1' => intval($basic['grant']['credit1']),
-				'credit2' => intval($basic['grant']['credit2']),
-				'coupon' => $basic['grant']['coupon'],
-			));
-		$card_api->nums_status = intval($nums['nums_status']);
-		$card_api->nums_text = trim($nums['nums_text']);
-		$card_api->times_status = intval($times['times_status']);
-		$card_api->times_text = trim($times['times_text']);
-		$card_api->params = json_encode($params);
-		$card_api->html = $html;
-		$update = $card_api->getcardarray();
+		$update = array(
+			'title' => $title,
+			'format_type' => $basic['format_type'],
+			'format' => $format,
+			'color' => iserializer($basic['color']),
+			'background' => iserializer(array(
+				'background' => $basic['background']['type'],
+				'image' => $basic['background']['image'],
+			)),
+			'logo' => $basic['logo'],
+			'description' => trim($basic['description']),
+			'grant_rate' => intval($activity['grant_rate']),
+			'offset_rate' => intval($basic['offset_rate']),
+			'offset_max' => intval($basic['offset_max']),
+			'fields' => iserializer($fields),
+			'grant' => iserializer(
+				array(
+					'credit1' => intval($basic['grant']['credit1']),
+					'credit2' => intval($basic['grant']['credit2']),
+			'coupon' => $basic['grant']['coupon'],
+				)
+			),
+			'discount_type' => intval($activity['discount_type']),
+			'nums_status' => intval($nums['nums_status']),
+			'nums_text' => trim($nums['nums_text']),
+			'times_status' => intval($times['times_status']),
+			'times_text' => trim($times['times_text']),
+			'params' => json_encode($params),
+			'html' => $html
+		);
 		$grant = iunserializer($update['grant']);
 		if ($grant['credit1'] < 0 || $grant['credit2'] < 0) {
 			message('领卡赠送积分或余额不能为负数', referer(), 'error');

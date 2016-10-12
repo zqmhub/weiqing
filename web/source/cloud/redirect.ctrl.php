@@ -95,9 +95,7 @@ if ($do == 'buybranch') {
 		'is_upgrade' => 1,
 		'is_buy' => 1,
 	);
-	if (trim($_GPC['type']) == 'webtheme') {
-		$params['w'] = $auth['name'];
-	} elseif (trim($_GPC['type']) == 'theme') {
+	if (trim($_GPC['type']) == 'theme') {
 		$params['t'] = $auth['name'];
 	} else {
 		$params['m'] = $auth['name'];

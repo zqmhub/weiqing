@@ -1,7 +1,6 @@
 {php define('MUI', true);}
 {template 'common/header'}
 {if $do == 'receive_card'}
-{if $setting['source'] == 1 || $_GPC['card_type'] == COUPON_TYPE}
 <div class="mui-content membership-card-receive">
 	{if !empty($setting['grant']) && ($setting['grant']['credit1'] || $setting['grant']['credit2'] || !empty($coupon))}
 	<div class="mui-bg-warning mui-text-center tips">
@@ -72,33 +71,10 @@
 		</div>
 		<div class="mui-content-padded">
 			<input type="hidden" name="token" value="{$_W['token']}" />
-			{if $_GPC['card_type'] == WECHAT_COUPON}
-			<input type="hidden" name="card_type" value="{WECHAT_COUPON}"/>
-			{/if}
-			<button class="mui-btn mui-btn-success mui-btn-block" id="receive-card" type="submit" name="submit" value="提交">领取</button>
-		</div>
+		<button class="mui-btn mui-btn-success mui-btn-block" id="receive-card" type="submit" name="submit" value="提交">领取</button>
+	</div>
 	</form>
 </div>
-{else}
-<script>
-	var card_id = "{$setting['card_id']}";
-	$.post("{php echo murl('mc/card/getext')}", {'card_id' : card_id}, function(data) {
-		var data = $.parseJSON(data);
-		wx.ready(function(){
-			wx.addCard({
-				cardList:[
-					{
-						cardId : card_id,
-						cardExt : data.message.message
-					}
-				],
-				success: function (res) {
-				}
-			});
-		});
-	});
-</script>
-{/if}
 {/if}
 <!-- 我的会员卡 -->
 {if $do == 'mycard'}

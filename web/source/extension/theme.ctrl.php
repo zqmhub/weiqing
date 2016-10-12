@@ -4,7 +4,7 @@
  * $sn: pro/web/source/extension/theme.ctrl.php : v 58211b71cef4 : 2015/08/21 08:13:16 : duanbiaowu $
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('installed', 'prepared', 'install', 'refresh', 'uninstall', 'batch-install', 'designer', 'check', 'upgrade');
+$dos = array('installed', 'prepared', 'install', 'refresh', 'uninstall', 'web', 'batch-install', 'designer', 'check', 'upgrade');
 $do = in_array($do, $dos) ? $do : 'installed';
 load()->model('extension');
 load()->model('cloud');
@@ -284,6 +284,30 @@ if($do == 'upgrade') {
 	message('模板更新成功！', url('extension/theme'), 'success');
 }
 
+if($do == 'web') {
+	$_W['page']['title'] = '管理后台风格 - 风格主题 - 扩展';
+	load()->model('setting');
+	if(checksubmit('submit')) {
+		$data = array(
+			'template' => $_GPC['template'],
+		);
+		setting_save($data, 'basic');
+		message('更新设置成功！', 'refresh');
+	}
+	$path = IA_ROOT . '/web/themes/';
+	if(is_dir($path)) {
+		if ($handle = opendir($path)) {
+			while (false !== ($templatepath = readdir($handle))) {
+				if ($templatepath != '.' && $templatepath != '..') {
+					if(is_dir($path.$templatepath)){
+						$template[] = $templatepath;
+					}
+				}
+			}
+		}
+	}
+	template('extension/web');
+}
 /*模板设计器*/
 if ($do == 'designer') {
 	if (empty($_W['isfounder'])) {

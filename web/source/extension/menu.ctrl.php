@@ -14,9 +14,11 @@ if($do == 'display') {
 	if(checksubmit('submit')) {
 		foreach($_GPC['id'] as $k => $v) {
 			$update = array();
+			$menuid = intval($v);
+			
 			$title = trim($_GPC['title'][$k]);
 			$is_system = intval($_GPC['is_system'][$k]);
-			if($v && $title) {
+			if($menuid && $title) {
 				$update = array(
 					'title' => $title,
 					'displayorder' => intval($_GPC['displayorder'][$k]),
@@ -26,7 +28,7 @@ if($do == 'display') {
 					$update['append_title'] = trim($_GPC['append_title'][$k]);
 					$update['append_url'] = trim($_GPC['append_url'][$k]);
 				}
-				pdo_update('core_menu', $update, array('id' => $v));
+				pdo_update('core_menu', $update, array('id' => $menuid));
 			}
 		}
 

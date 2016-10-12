@@ -182,19 +182,8 @@ if ($do == 'check') {
 						'branches' => $v['branches'],
 						'site_branch' => $v['branches'][$v['branch']],
 					);
-					if ($v['develop']) {
-						$mods[$k]['develop'] = $v['develop'];
-					}
-					if ($v['trade']) {
-						$mods[$k]['trade'] = $v['trade'];
-					}
 				}
-				
-				if (isset($v['pirate_apps'])) {
-					$mods['pirate_apps'] = array_values($v['pirate_apps']);;
-				} else {
-					$mods['pirate_apps'] = $ret['pirate_apps'];
-				}
+				$mods['pirate_apps'] = array_values($v['pirate_apps']);
 			}
 			if (!empty($mods)) {
 				exit(json_encode($mods));
@@ -516,34 +505,9 @@ if ($do == 'uninstall') {
 }
 
 if($do == 'upgrade') {
-	$batch = intval($_GPC['batch']);
-	if($_GPC['batch_init']){
-		if(empty($_GPC['upgrade_modules'])){
-			message('未勾选批量升级的模块', '', 'error');
-		} else {
-			isetcookie('modules_batch_upgrade', 1);
-			$upgrade_str = iserializer(explode('-', $_GPC['upgrade_modules']));
-			cache_write('upgrade:modules', $upgrade_str);
-		}
-	}
-	if($batch == 1) {
-		$wait_upgrade = (array)iunserializer(cache_read('upgrade:modules'));
-		if(empty($wait_upgrade)) {
-			isetcookie('modules_batch_upgrade', 0, -10000);
-			message('所有模块更新完毕', url('extension/module'), 'success');
-		}
-		$single_module = explode('|', array_shift($wait_upgrade));
-		$id = $single_module[0];
-		$_GPC['type'] = $single_module[1] ? 'getinfo' : '';
-	} else {
-		$id = $_GPC['m'];
-	}
+	$id = $_GPC['m'];
 	$module = pdo_fetch("SELECT mid, name, version FROM " . tablename('modules') . " WHERE name = :name", array(':name' => $id));
 	if (empty($module)) {
-		if($batch == 1) {
-			cache_write('upgrade:modules', iserializer($wait_upgrade));
-			message($module['title'] . ' 模块已经被卸载或是不存在。系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-		}
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
 
@@ -574,25 +538,11 @@ if($do == 'upgrade') {
 			message($info, '', 'ajax');
 		}
 		if (is_error($info)) {
-			if($batch == 1) {
-				cache_write('upgrade:modules', iserializer($wait_upgrade));
-				message($module['title'] . ' 模块报错：' . $info['message'] . '。系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-			}
 			message($info['message'], referer(), 'error');
 		}
 
 		if (!is_error($info)) {
 			if (empty($_GPC['flag'])) {
-				// 添加批量更新，只能是同分支不同版本的自动升级
-				if($batch == 1) {
-					if($info['version']['version'] < $info['braches'][$info['version']['branch_id']]['version']){	// 当前分支版本小于最大版本
-						header('location: ' . url('cloud/process', array('m' => $id, 'is_upgrade' => 1)));
-						exit;
-					}else{
-						cache_write('upgrade:modules', iserializer($wait_upgrade));
-						message($module['title'] . ' 模块，已经是当前分支的最新版本。系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-					}
-				}
 				if (intval($_GPC['branch']) > $info['version']['branch_id']) {
 					header('location: ' . url('cloud/redirect/buybranch', array('m' => $id, 'branch' => intval($_GPC['branch']), 'is_upgrade' => 1)));
 					exit;
@@ -608,19 +558,11 @@ if($do == 'upgrade') {
 	}
 	
 	if (empty($manifest)) {
-		if($batch == 1) {
-			cache_write('upgrade:modules', iserializer($wait_upgrade));
-			message($module['title'] . ' 模块安装配置文件不存在或是格式不正确。系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-		}
 		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
 	manifest_check($id, $manifest);
 
 	if (!file_exists($modulepath . 'processor.php') && !file_exists($modulepath . 'module.php') && !file_exists($modulepath . 'receiver.php') && !file_exists($modulepath . 'site.php')) {
-		if($batch == 1) {
-			cache_write('upgrade:modules', iserializer($wait_upgrade));
-			message($module['title'] . ' 模块处理文件 site.php, processor.php, module.php, receiver.php 一个都不存在 ！系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-		}
 		message('模块处理文件 site.php, processor.php, module.php, receiver.php 一个都不存在 ！', '', 'error');
 	}
 	$module = ext_module_convert($manifest);
@@ -711,10 +653,6 @@ if($do == 'upgrade') {
 		$module_subscribe_success = ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	if($batch == 1) {
-		cache_write('upgrade:modules', iserializer($wait_upgrade));
-		message($module['title'] . ' 模块更新成功！系统将进入下一个模块的更新。<br>请勿关闭浏览器', url('extension/module/upgrade', array('batch' => 1)), 'success');
-	}
 	if ($_GPC['flag'] == 1) {
 		message('模块更新成功！ <br> 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.<div><a class="btn btn-primary" href="' . url('system/database/trim') . '">现在去删除</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-default" href="' . url('extension/module/') . '">返回模块列表</a></div>', '', 'success');
 	} else {

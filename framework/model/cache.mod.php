@@ -153,7 +153,7 @@ function cache_build_frame_menu() {
 							$temp['items'][] = $item;
 						}
 					}
-					$frames[$da['name']][$child['permission_name']] = $temp;
+					$frames[$da['name']][] = $temp;
 				}
 			}
 		}

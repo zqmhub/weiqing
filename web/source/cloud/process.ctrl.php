@@ -49,11 +49,6 @@ if (!empty($_GPC['m'])) {
 	$type = 'theme';
 	$is_upgrade = intval($_GPC['is_upgrade']);
 	$packet = cloud_t_build($_GPC['t']);
-} elseif (!empty($_GPC['w'])) {
-	$m = $_GPC['w'];
-	$type = 'webtheme';
-	$is_upgrade = intval($_GPC['is_upgrade']);
-	$packet = cloud_w_build($_GPC['w']);
 } else {
 	$packet = cloud_build();
 }
