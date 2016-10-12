@@ -15,6 +15,7 @@ load()->model('cloud');
 load()->classs('coupon');
 echo '3211';
 echo md5('测试一下cherry');exit;
+echo '测试一下商业版合并免费版';
 $qiniu_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php'));
 $qiniu_zone = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php'));
 $cos_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php'));
