@@ -238,7 +238,7 @@
 <div class="mui-content">
 	<ul class="mui-table-view mui-table-view-chevron">
 		{if $activity_info['params']['discount_type'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			消费优惠信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -259,7 +259,7 @@
 		</div>
 		{/if}
 		{if $recharge_info['params']['recharge_type'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			充值优惠信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -278,7 +278,7 @@
 		</div>
 		{/if}
 		{if $nums_info['params']['nums_status'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			{$nums_info['params']['nums_text']}信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -300,7 +300,7 @@
 		</div>
 		{/if}
 		{if $times_info['params']['times_status'] != 0}
-		<li class="mui-table-view-cell">
+		<li class="mui-table-view-cell js-activity-descrpition">
 			{$times_info['params']['times_text']}信息
 			<span class="mui-pull-right">
 				<span class="fa fa-angle-down">
@@ -324,7 +324,7 @@
 	</ul>
 </div>
 <script>
-	$('.mui-table-view-cell').click(function() {
+	$('.js-activity-descrpition').click(function() {
 		$(this).next().toggle();
 		$(this).find('span.fa').toggleClass('fa-angle-up');
 		$(this).find('span.fa').toggleClass('fa-angle-down');
@@ -509,14 +509,19 @@
 			{php }}
 		</div>
 	</div>
+	{if !empty($today_signed['id'])}
 	<div class="sign-record">今日已签到<span class="mui-big">+{$today_sign_credit}</span>积分</div>
 	<div class="mui-text-muted sign-tips mui-mt10">明日可得 <span>+{$tomorrow_sign_credit}</span>积分</div>
+	{/if}
 </div>
 <script>
 	$(function() {
 		today_signed = "{$today_signed['id']}";
 		if (!today_signed) {
 			util.toast('签到成功');
+			setTimeout(function(){
+				location.reload();
+			},2500);
 		}
 	})
 </script>
