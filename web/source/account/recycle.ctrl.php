@@ -32,6 +32,17 @@ if ($do == 'post') {
 	$op = trim($_GPC['op']);
 	if ($op == 'recover') {
 		if (!empty($uniacid)) {
+			$uid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+			if (!empty($uid)) {
+				$user = pdo_get('users', array('uid' => $uid));
+				$group = pdo_fetch('SELECT * FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $user['groupid']));
+				$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => 'owner'));
+				if (($uniacid_num+1) > $group['maxaccount']) {
+					pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner', 'uid' => $uid));
+					pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
+					message('超过公众号创始人所能创建公众号的数量，此公众号归主管理员所有', referer());
+				}
+			}
 			pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
 		} else {
 			pdo_update('account', array('isdeleted' => 0), array('acid' => $acid));
