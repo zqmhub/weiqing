@@ -59,7 +59,7 @@
 						<div class="mui-input-row">
 							<label>{$system_fields['mobile']['title']}</label>
 									{if !empty($profile['mobile'])}
-									<input type="text" readonly value="{$profile['mobile']}">
+									<input type="text" readonly name="mobile" value="{$profile['mobile']}">
 									{else}
 									{php echo tpl_app_fans_form('mobile',$profile['mobile'], $system_fields['mobile']['title']);}
 									{/if}
