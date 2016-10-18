@@ -148,6 +148,9 @@ class DB {
 	 * @return mixed
 	 */
 	public function fetch($sql, $params = array()) {
+		if (($cache = $this->cacheRead($sql)) !== false) {
+			return $cache['data'];
+		}
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
@@ -163,7 +166,9 @@ class DB {
 		if (!$result) {
 			return false;
 		} else {
-			return $statement->fetch(pdo::FETCH_ASSOC);
+			$data = $statement->fetch(pdo::FETCH_ASSOC);
+			$this->cacheWrite($sql, $data);
+			return $data;
 		}
 	}
 
@@ -614,6 +619,31 @@ class DB {
 			);
 			$this->insert('core_performance', $sqldata);
 		}
+		return true;
+	}
+	
+	private function cacheRead($key) {
+		if (empty($key)) {
+			return false;
+		}
+		$cachekey = md5($key);
+		$data = cache_load($cachekey);
+		if (empty($data) || empty($data['data']) || $data['expire'] < TIMESTAMP) {
+			return false;
+		}
+		return $data;
+	}
+	
+	private function cacheWrite($key, $data, $cachetime = 5) {
+		if (empty($data) || empty($key)) {
+			return false;
+		}
+		$cachekey = md5($key);
+		$cachedata = array(
+			'data' => $data,
+			'expire' => TIMESTAMP + $cachetime,
+		);
+		cache_write($cachekey, $cachedata);
 		return true;
 	}
 }
