@@ -1,4 +1,10 @@
 <?php
+/**
+ * 远程附件
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
+ */
+defined('IN_IA') or exit('Access Denied');
+
 function attachment_alioss_datacenters() {
 	$bucket_datacenter = array(
 		'oss-cn-hangzhou' => '杭州数据中心',
@@ -11,7 +17,6 @@ function attachment_alioss_datacenters() {
 	);
 	return $bucket_datacenter;
 }
-
 
 function attachment_newalioss_auth($key, $secret, $bucket){
 	require_once(IA_ROOT.'/framework/library/alioss/autoload.php');
@@ -48,37 +53,13 @@ function attachment_alioss_buctkets($key, $secret) {
 	return $bucketlist;
 }
 
-function attachment_qiniu_change_district($district) {
-	if ($district == 2) {
-		$zonge = IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php';
-		$zonge = file_get_contents($zonge);
-		$zonge = str_replace('http://up.qiniu.com', 'http://up-z1.qiniu.com', $zonge);
-		$zonge = str_replace('http://upload.qiniu.com', 'http://upload-z1.qiniu.com', $zonge);
-		file_put_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php', $zonge);
-		$config = IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php';
-		$config = file_get_contents($config);
-		$config = str_replace('http://iovip.qbox.me', 'http://iovip-z1.qbox.me', $config);
-		file_put_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php', $config);
-	} else {
-		$zonge = IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php';
-		$zonge = file_get_contents($zonge);
-		$zonge = str_replace('http://up-z1.qiniu.com', 'http://up.qiniu.com', $zonge);
-		$zonge = str_replace('http://upload-z1.qiniu.com', 'http://upload.qiniu.com', $zonge);
-		file_put_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php', $zonge);
-		$config = IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php';
-		$config = file_get_contents($config);
-		$config = str_replace('http://iovip-z1.qbox.me', 'http://iovip.qbox.me', $config);
-		file_put_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php', $config);
-	}
-	return true;
-}
-
-function attachment_qiniu_auth($key, $secret,$bucket, $district) {
+function attachment_qiniu_auth($key, $secret,$bucket, $district ) {
 	require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
-	attachment_qiniu_change_district($district);
 	$auth = new Qiniu\Auth($key, $secret);
 	$token = $auth->uploadToken($bucket);
-	$uploadmgr = new Qiniu\Storage\UploadManager();
+	$zone = $district == 1 ?  Qiniu\Zone::zone0() : Qiniu\Zone::zone1();
+	$config = new Qiniu\Config($zone);
+	$uploadmgr = new Qiniu\Storage\UploadManager($config);
 	list($ret, $err) = $uploadmgr->putFile($token, 'MicroEngine.ico', ATTACHMENT_ROOT.'images/global/MicroEngine.ico');
 	if ($err !== null) {
 		$err = (array)$err;

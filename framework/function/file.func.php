@@ -283,7 +283,9 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 	}elseif ($_W['setting']['remote']['type'] == '3') {
 		require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
 		$auth = new Qiniu\Auth($_W['setting']['remote']['qiniu']['accesskey'],$_W['setting']['remote']['qiniu']['secretkey']);
-		$uploadmgr = new Qiniu\Storage\UploadManager();
+		$zone = $_W['setting']['remote']['qiniu']['district'] == 1 ?  Qiniu\Zone::zone0() : Qiniu\Zone::zone1();
+		$config = new Qiniu\Config($zone);
+		$uploadmgr = new Qiniu\Storage\UploadManager($config);
 		$putpolicy = Qiniu\base64_urlSafeEncode(json_encode(array('scope' => $_W['setting']['remote']['qiniu']['bucket'].':'. $filename)));
 		$uploadtoken = $auth->uploadToken($_W['setting']['remote']['qiniu']['bucket'], $filename, 3600, $putpolicy);
 		list($ret, $err) = $uploadmgr->putFile($uploadtoken, $filename, ATTACHMENT_ROOT. '/'.$filename);
