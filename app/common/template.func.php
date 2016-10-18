@@ -389,7 +389,7 @@ function site_slide_search($params = array()) {
 		foreach($list as &$row) {
 			if (!strexists($row['url'], './')) {
 				if (!strexists($row['url'], 'http')) {
-					$row['url'] = $_W['sitescheme'] . $row['url'];
+					$row['url'] = '//' . $row['url'];
 				}
 			}
 			$row['thumb'] = tomedia($row['thumb']);
