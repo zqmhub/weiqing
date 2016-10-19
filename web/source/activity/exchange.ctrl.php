@@ -209,16 +209,15 @@ if ($type == 'goods') {
 		$exchanges = pdo_fetchall('SELECT id, title FROM ' . tablename('activity_exchange') . ' WHERE uniacid = :uniacid ORDER BY id DESC', array(':uniacid' => $_W['uniacid']));
 		$starttime = empty($_GPC['time']['start']) ? strtotime('-1 month') : strtotime($_GPC['time']['start']);
 		$endtime = empty($_GPC['time']['end']) ? TIMESTAMP : strtotime($_GPC['time']['end']) + 86399;
-
-		$where = " WHERE a.uniacid=:uniacid AND a.createtime>=:starttime AND a.createtime<:endtime";
+		$where = " WHERE a.uniacid=:uniacid AND a.createtime > :starttime AND a.createtime < :endtime";
 		$params = array(
 			':uniacid' => $_W['uniacid'],
 			':starttime' => $starttime,
 			':endtime' => $endtime,
 		);
-		$uid = intval($_GPC['uid']);
+		$uid = $_GPC['uid'];
 		if (!empty($uid)) {
-			$where .= ' AND a.uid=:uid';
+			$where .= ' AND ((a.name=:uid) or (a.mobile = :uid))';
 			$params[':uid'] = $uid;
 		}
 		$exid = intval($_GPC['exid']);
@@ -227,9 +226,52 @@ if ($type == 'goods') {
 		}
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-
 		$list = pdo_fetchall("SELECT a.*, b.title,b.extra,b.thumb FROM ".tablename('activity_exchange_trades_shipping'). ' AS a LEFT JOIN ' . tablename('activity_exchange') . ' AS b ON a.exid = b.id ' . " $where ORDER BY tid DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('activity_exchange_trades_shipping') . ' AS a LEFT JOIN ' . tablename('activity_exchange') . ' AS b ON a.exid = b.id '. $where , $params);
+		if (checksubmit('export')) {
+			$header = array(
+				'title' => '标题', 'extra' => '兑换物品', 'name' => '收件人','createtime' => '兑换时间', 'mobile' => '收件人电话', 'zipcode' => '收件人邮编', 'address' => '收件地址', 'status' => '状态'
+			);
+			$html = "\xEF\xBB\xBF";
+			foreach ($header as $li) {
+				$html .= $li . "\t ,";
+			}
+			$html .= "\n";
+			foreach ($list as $deliver) {
+				foreach ($header as $key => $title) {
+					if ($key == 'createtime') {
+						$html .= date('Y-m-d', $deliver[$key]) . "\t ,";
+					} elseif ($key == 'extra') {
+						$extra = iunserializer($deliver[$key]);
+						$html .= $extra['title']. "\t ,";
+					} elseif ($key == 'status') {
+						switch ($deliver['status']){
+							case '0' :
+								$status = '待发货';
+								break;
+							case '1' :
+								$status = '待收货';
+								break;
+							case '2' :
+								$status = '已收货';
+								break;
+							case '-1' :
+								$status = '已关闭';
+								break;
+						}
+						$html .= $status . "\t ,";
+					} else {
+						$html .= $deliver[$key] . "\t ,";
+					}
+				}
+				$html .= "\n";
+			}
+			$html .= "\n";
+			header("Content-type:text/csv");
+			header("Content-Disposition:attachment; filename=会员数据.csv");
+			echo $html;
+			exit();
+		}
 		if(!empty($list)) {
 			$uids = array();
 			foreach ($list as $row) {
