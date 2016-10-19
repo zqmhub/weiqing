@@ -1272,7 +1272,7 @@ class WeiXinAccount extends WeAccount {
 		} elseif(!empty($result['errcode'])) {
 			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
 		}
-		return $result;
+		return true;
 	}
 	/*上传临时素材接口
 	 * 类型：图片，语音
