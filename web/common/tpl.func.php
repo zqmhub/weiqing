@@ -442,6 +442,11 @@ function tpl_form_field_multi_image($name, $value = array(), $options = array())
 	$options['multiple'] = true;
 	$options['direct'] = false;
 	$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
+	if (isset($options['dest_dir']) && !empty($options['dest_dir'])) {
+		if (!preg_match('/^\w+([\/]\w+)?$/i', $options['dest_dir'])) {
+			exit('图片上传目录错误,只能指定最多两级目录,如: "we7_store","we7_store/d1"');
+		}
+	}
 	$s = '';
 	if (!defined('TPL_INIT_MULTI_IMAGE')) {
 		$s = '
@@ -1129,7 +1134,7 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 					'crawler' : ''
 				},
 				path : '',
-				dest_dir : '',
+				dest_dir : '{$options['dest_dir']}',
 				global : false,
 				thumb : false,
 				width : 0,
