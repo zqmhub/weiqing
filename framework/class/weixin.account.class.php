@@ -945,11 +945,10 @@ class WeiXinAccount extends WeAccount {
 		return $result;
 	}
 	
-	
 	public function isTagSupported() {
-		return 	!empty($this->account['key']) &&
-		!empty($this->account['secret']) &&
-		(intval($this->account['level']) > 2);
+		return (!empty($this->account['key']) &&
+		!empty($this->account['secret']) || $this->account['type'] == ACCOUNT_OAUTH_LOGIN) &&
+		(intval($this->account['level']) > ACCOUNT_SERVICE);
 	}
 	
 	/** 
