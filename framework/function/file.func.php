@@ -565,7 +565,6 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
 	} else {
 		return error('-1', '获取原始图像信息失败');
 	}
-
 	//处理裁剪的宽高
 	if ($width == '0' || $width > $org_info[0]) {
 		$width = $org_info[0];
