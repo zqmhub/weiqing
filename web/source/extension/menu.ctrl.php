@@ -12,9 +12,9 @@ load()->model('frame');
 if($do == 'display') {
 	$menus = frame_lists();
 	if(checksubmit('submit')) {
-		foreach($_GPC['id'] as $k => $v) {
+		foreach($_GPC['id'] as $k => $menuid) {
 			$update = array();
-			$menuid = intval($v);
+			$menuid = intval($menuid);
 			
 			$title = trim($_GPC['title'][$k]);
 			$is_system = intval($_GPC['is_system'][$k]);

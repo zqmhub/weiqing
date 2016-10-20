@@ -85,7 +85,7 @@ if($do == 'download') {
 	
 	$_W['setting']['site']['token'] = authcode(cache_load('cloud:transtoken'), 'DECODE');
 	$string = (md5($file) . $ret['path'] . $_W['setting']['site']['token']);
-	if(!empty($_W['setting']['site']['token']) && md5($string) == $ret['sign']) {
+	if(!empty($_W['setting']['site']['token']) && md5($string) === $ret['sign']) {
 		$path = IA_ROOT . $ret['path'];
 		load()->func('file');
 		@mkdirs(dirname($path));
