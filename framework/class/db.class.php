@@ -148,7 +148,8 @@ class DB {
 	 * @return mixed
 	 */
 	public function fetch($sql, $params = array()) {
-		if (($cache = $this->cacheRead($sql)) !== false) {
+		$cachekey = $this->cacheKey($sql, $params);
+		if (($cache = $this->cacheRead($cachekey)) !== false) {
 			return $cache['data'];
 		}
 		$starttime = microtime();
@@ -167,7 +168,7 @@ class DB {
 			return false;
 		} else {
 			$data = $statement->fetch(pdo::FETCH_ASSOC);
-			$this->cacheWrite($sql, $data);
+			$this->cacheWrite($cachekey, $data);
 			return $data;
 		}
 	}
@@ -622,11 +623,10 @@ class DB {
 		return true;
 	}
 	
-	private function cacheRead($key) {
-		if (empty($key)) {
+	private function cacheRead($cachekey) {
+		if (empty($cachekey)) {
 			return false;
 		}
-		$cachekey = md5($key);
 		$data = cache_load($cachekey);
 		if (empty($data) || empty($data['data']) || $data['expire'] < TIMESTAMP) {
 			return false;
@@ -634,16 +634,19 @@ class DB {
 		return $data;
 	}
 	
-	private function cacheWrite($key, $data, $cachetime = 5) {
-		if (empty($data) || empty($key)) {
+	private function cacheWrite($cachekey, $data, $cachetime = 5) {
+		if (empty($data) || empty($cachekey)) {
 			return false;
 		}
-		$cachekey = md5($key);
 		$cachedata = array(
 			'data' => $data,
 			'expire' => TIMESTAMP + $cachetime,
 		);
 		cache_write($cachekey, $cachedata);
 		return true;
+	}
+	
+	private function cacheKey($sql, $params) {
+		return md5($sql . serialize($params));
 	}
 }
