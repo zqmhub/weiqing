@@ -760,6 +760,7 @@ function cloud_flow_uniaccount_post($uniaccount) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
 	cache_delete("cloud:ad:uniaccount:{$uniaccount['uniacid']}");
+	cache_delete("cloud:ad:uniaccount:list");
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
