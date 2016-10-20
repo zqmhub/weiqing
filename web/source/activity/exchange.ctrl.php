@@ -209,13 +209,13 @@ if ($type == 'goods') {
 		$exchanges = pdo_fetchall('SELECT id, title FROM ' . tablename('activity_exchange') . ' WHERE uniacid = :uniacid ORDER BY id DESC', array(':uniacid' => $_W['uniacid']));
 		$starttime = empty($_GPC['time']['start']) ? strtotime('-1 month') : strtotime($_GPC['time']['start']);
 		$endtime = empty($_GPC['time']['end']) ? TIMESTAMP : strtotime($_GPC['time']['end']) + 86399;
-		$where = " WHERE a.uniacid=:uniacid AND a.createtime > :starttime AND a.createtime < :endtime";
+		$where = " WHERE a.uniacid=:uniacid AND a.createtime >= :starttime AND a.createtime <= :endtime";
 		$params = array(
 			':uniacid' => $_W['uniacid'],
 			':starttime' => $starttime,
 			':endtime' => $endtime,
 		);
-		$uid = $_GPC['uid'];
+		$uid = addslashes($_GPC['uid']);
 		if (!empty($uid)) {
 			$where .= ' AND ((a.name=:uid) or (a.mobile = :uid))';
 			$params[':uid'] = $uid;
