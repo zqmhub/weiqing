@@ -623,6 +623,9 @@ function ext_module_script_clean($modulename, $manifest) {
 			unlink($moduleDir . $manifest['upgrade']);
 		}
 	}
+	if (file_exists($moduleDir . 'manifest.xml')) {
+		unlink($moduleDir . 'manifest.xml');
+	}
 }
 
 /**
