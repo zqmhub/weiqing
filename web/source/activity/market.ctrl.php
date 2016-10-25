@@ -110,11 +110,12 @@ elseif ($do == 'post') {
 					$param['end'] = strtotime($_GPC['daterange']['end']);
 				}
 				if ($post['members'][0] == 'group_member') {
-					$param['groupid'] = intval($_GPC['groupid']);
+					$param['groupid'] = intval($_GPC['group']);
 				}
 				$openids = activity_get_member($post['members'][0], $param);
 				$openids = $openids['members'];
 				$account_api = WeAccount::create();
+				set_time_limit(300);
 				foreach ($post['coupons'] as $coupon) {
 					$post['members'] = serialize($post['members']);
 					$post['coupons'] = serialize($post['coupons']);
