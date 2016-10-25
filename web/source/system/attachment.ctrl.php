@@ -191,7 +191,7 @@ if ($do == 'global') {
 		message('远程附件配置信息更新成功！', url('system/attachment/remote'));
 	}
 	$remote = $_W['setting']['remote'];
-	if (!empty($remote['alioss']['key']) && !empty($remote['alioss']['secret'])) {
+	if ($remote['type'] == ATTACH_OSS && !empty($remote['alioss']['key']) && !empty($remote['alioss']['secret'])) {
 		$buckets = attachment_alioss_buctkets($remote['alioss']['key'], $remote['alioss']['secret']);
 	}
 	$bucket_datacenter = attachment_alioss_datacenters();
