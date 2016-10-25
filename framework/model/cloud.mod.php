@@ -596,7 +596,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = 'http://s.we7.cc/web/index.php?c=auth&a=passwort&__auth=' . $query;
+	$auth_url = 'http://s.we7.cc/index.php?c=auth&a=passwort&__auth=' . $query;
 
 	return $auth_url;
 }
@@ -711,7 +711,9 @@ function cloud_flow_master_post($flow_master) {
 		'linkman' => $flow_master['linkman'],
 		'mobile' => $flow_master['mobile'],
 		'address' => $flow_master['address'],
-		'id_card_photo' => $flow_master['id_card_photo'], 		'business_licence_photo' => $flow_master['business_licence_photo'], 	);
+		'id_card_photo' => $flow_master['id_card_photo'], 
+		'business_licence_photo' => $flow_master['business_licence_photo'],
+	);
 	$dat = cloud_request('http://s.we7.cc/gateway.php', $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
