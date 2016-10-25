@@ -183,7 +183,7 @@ if ($do == 'check') {
 						'site_branch' => $v['branches'][$v['branch']],
 					);
 				}
-				$mods['pirate_apps'] = array_values($v['pirate_apps']);
+				$mods['pirate_apps'] = !empty($v['pirate_apps']) ? array_values($v['pirate_apps']) : array();
 			}
 			if (!empty($mods)) {
 				exit(json_encode($mods));
