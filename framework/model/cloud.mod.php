@@ -1,7 +1,7 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -42,14 +42,8 @@ function cloud_m_prepare($name) {
 
 function _cloud_build_params() {
 	global $_W;
-	if (!empty($_W['setting']['site']['url']) && !strexists($_W['siteroot'], $_W['setting']['site']['url'])) {
-		$urlinfo = parse_url($_W['setting']['site']['url']);
-		$host = $urlinfo['host'];
-	} else {
-		$host = $_SERVER['HTTP_HOST'];
-	}
 	$pars = array();
-	$pars['host'] = $host;
+	$pars['host'] = $_SERVER['HTTP_HOST'];
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
 	$pars['release'] = IMS_RELEASE_DATE;
@@ -77,7 +71,7 @@ function cloud_m_build($modulename, $type = '') {
 		$pars['module_version'] = $module['version'];
 	}
 
-		$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
+	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.build';
 	$ret = _cloud_shipping_parse($dat, $file);
 
@@ -602,7 +596,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = 'http://s.we7.cc/index.php?c=auth&a=passwort&__auth=' . $query;
+	$auth_url = 'http://s.we7.cc/web/index.php?c=auth&a=passwort&__auth=' . $query;
 
 	return $auth_url;
 }
@@ -755,12 +749,16 @@ function cloud_flow_uniaccount_post($uniaccount) {
 	$pars['uniaccount'] = array(
 		'uniacid' => $uniaccount['uniacid'],
 	);
-	isset($uniaccount['title']) && $pars['uniaccount']['title'] = $uniaccount['title']; 	isset($uniaccount['original']) && $pars['uniaccount']['original'] = $uniaccount['original']; 	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type']; 	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags']; 	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; 	$dat = cloud_request('http://s.we7.cc/gateway.php', $pars, array(), 300);
+	isset($uniaccount['title']) && $pars['uniaccount']['title'] = $uniaccount['title'];
+	isset($uniaccount['original']) && $pars['uniaccount']['original'] = $uniaccount['original']; 
+	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type']; 
+	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags']; 
+	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; 
+	$dat = cloud_request('http://s.we7.cc/gateway.php', $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
 	cache_delete("cloud:ad:uniaccount:{$uniaccount['uniacid']}");
-	cache_delete("cloud:ad:uniaccount:list");
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
