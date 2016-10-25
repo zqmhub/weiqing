@@ -453,7 +453,7 @@ function site_quickmenu() {
 			$multiid = empty($site_multi_info) ? '' : $id;
 		} else {
 			if(!($_GPC['c'] == 'home' && $_GPC['a'] == 'page')){
-				isetcookie('__multiid', '');
+				@isetcookie('__multiid', '');
 			}
 		}
 		if (empty($multiid)) {
