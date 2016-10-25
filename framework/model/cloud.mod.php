@@ -42,8 +42,14 @@ function cloud_m_prepare($name) {
 
 function _cloud_build_params() {
 	global $_W;
+	if (!empty($_W['setting']['site']['url']) && !strexists($_W['siteroot'], $_W['setting']['site']['url'])) {
+		$urlinfo = parse_url($_W['setting']['site']['url']);
+		$host = $urlinfo['host'];
+	} else {
+		$host = $_SERVER['HTTP_HOST'];
+	}
 	$pars = array();
-	$pars['host'] = $_SERVER['HTTP_HOST'];
+	$pars['host'] = $host;
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
 	$pars['release'] = IMS_RELEASE_DATE;
@@ -761,6 +767,7 @@ function cloud_flow_uniaccount_post($uniaccount) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
 	cache_delete("cloud:ad:uniaccount:{$uniaccount['uniacid']}");
+	cache_delete("cloud:ad:uniaccount:list");
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
