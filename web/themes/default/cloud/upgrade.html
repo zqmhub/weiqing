@@ -140,14 +140,14 @@
 		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
-				<input type="button" id="forward" value="立即更新" disabled class="btn btn-primary" />
+				<input type="button" id="forward" value="立即更新" class="btn btn-primary" />
 				<input name="rollback" type="button" value="更新回滚列表" class="btn btn-success" data-toggle="modal" data-target="#rollback-panel" />
 			</div>
 		</div>
 		{else}
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
-				<input name="submit" type="submit" value="立即检查新版本" disabled class="btn btn-primary" />
+				<input name="submit" type="submit" value="立即检查新版本" class="btn btn-primary" />
 				<input name="rollback" type="button" value="更新回滚列表" class="btn btn-success" data-toggle="modal" data-target="#rollback-panel" />
 				<input type="hidden" name="token" value="{$_W['token']}" />
 				<div class="help-block">当前系统未检测到有新版本, 你可以点击此按钮, 来立即检查一次.</div>
