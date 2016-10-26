@@ -751,7 +751,7 @@ function istrlen($string, $charset = '') {
 	if (strtolower($charset) == 'gbk') {
 		$charset = 'gbk';
 	} else {
-		$charset = 'utf8';
+		$charset = 'utf-8';
 	}
 	if (function_exists('mb_strlen')) {
 		return mb_strlen($string, $charset);
@@ -759,7 +759,7 @@ function istrlen($string, $charset = '') {
 		$n = $noc = 0;
 		$strlen = strlen($string);
 
-		if ($charset == 'utf8') {
+		if ($charset == 'utf-8') {
 
 			while ($n < $strlen) {
 				$t = ord($string[$n]);

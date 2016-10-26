@@ -602,7 +602,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = 'http://s.we7.cc/index.php?c=auth&a=passwort&__auth=' . $query;
+	$auth_url = 'http://s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
 
 	return $auth_url;
 }
