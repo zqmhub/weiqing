@@ -81,9 +81,6 @@ if ($do == 'register_flow') {
 		if (!empty($flow_master_info['business_licence_photo']) && empty($business_licence_photo)) {
 			$business_licence_photo = $flow_master_info['business_licence_photo'];
 		}
-		if (empty($id_card_photo) || empty($business_licence_photo)) {
-			message('图片保存失败，请重新上传4M以内的图片', referer(), 'error');
-		}
 		$flow_master = array(
 			'linkman' => trim($_GPC['linkman']),
 			'mobile' => trim($_GPC['mobile']),
