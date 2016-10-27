@@ -31,15 +31,17 @@ function cache_memcache() {
  * 取出缓存的单条数据
  *
  * @param 缓存键名 ，多个层级或分组请使用:隔开
+ * @param boolean $forcecache 是否强制使用缓存
  * @return mixed
  */
-function cache_read($key) {
+function cache_read($key, $forcecache = false) {
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
 	}
+
 	$result = $memcache->get(cache_prefix($key));
-	if (empty($result)) {
+	if (empty($result) && empty($forcecache)) {
 		$dbcache = pdo_get('core_cache', array('key' => $key), array('value'));
 		if (!empty($dbcache['value'])) {
 			$result = iunserializer($dbcache['value']);
@@ -64,18 +66,21 @@ function cache_search($key) {
  *
  * @param string $key
  * @param mixed $data
+ * @param int $ttl 缓存超时时间
+ * @param boolean $forcecache 是否强制使用缓存
  * @return mixed
  */
-function cache_write($key, $value, $ttl = 0) {
+function cache_write($key, $value, $ttl = 0, $forcecache = false) {
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
 	}
-	$record = array();
-	$record['key'] = $key;
-	$record['value'] = iserializer($value);
-	pdo_insert('core_cache', $record, true);
-	
+	if (empty($forcecache)) {
+		$record = array();
+		$record['key'] = $key;
+		$record['value'] = iserializer($value);
+		pdo_insert('core_cache', $record, true);
+	}
 	if ($memcache->set(cache_prefix($key), $value, MEMCACHE_COMPRESSED, $ttl)) {
 		return true;
 	} else {
@@ -86,7 +91,7 @@ function cache_write($key, $value, $ttl = 0) {
 /**
  * 删除某个键的缓存数据
  * @param string $key
- * @return mixed 
+ * @return mixed
  */
 function cache_delete($key) {
 	$memcache = cache_memcache();
@@ -101,7 +106,6 @@ function cache_delete($key) {
 		return false;
 	}
 }
-
 
 /**
  * 清空缓存指定前缀或所有数据

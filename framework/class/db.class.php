@@ -121,6 +121,10 @@ class DB {
 	 * @return mixed
 	 */
 	public function fetchcolumn($sql, $params = array(), $column = 0) {
+		$cachekey = $this->cacheKey($sql, $params);
+		if (($cache = $this->cacheRead($cachekey)) !== false) {
+			return $cache['data'];
+		}
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
@@ -136,7 +140,9 @@ class DB {
 		if (!$result) {
 			return false;
 		} else {
-			return $statement->fetchColumn($column);
+			$data = $statement->fetchColumn($column);
+			$this->cacheWrite($cachekey, $data);
+			return $data;
 		}
 	}
 	
@@ -181,6 +187,10 @@ class DB {
 	 * @return mixed
 	 */
 	public function fetchall($sql, $params = array(), $keyfield = '') {
+		$cachekey = $this->cacheKey($sql, $params);
+		if (($cache = $this->cacheRead($cachekey)) !== false) {
+			return $cache['data'];
+		}
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
@@ -197,21 +207,22 @@ class DB {
 			return false;
 		} else {
 			if (empty($keyfield)) {
-				return $statement->fetchAll(pdo::FETCH_ASSOC);
+				$result = $statement->fetchAll(pdo::FETCH_ASSOC);
 			} else {
 				$temp = $statement->fetchAll(pdo::FETCH_ASSOC);
-				$rs = array();
+				$result = array();
 				if (!empty($temp)) {
 					foreach ($temp as $key => &$row) {
 						if (isset($row[$keyfield])) {
-							$rs[$row[$keyfield]] = $row;
+							$result[$row[$keyfield]] = $row;
 						} else {
-							$rs[] = $row;
+							$result[] = $row;
 						}
 					}
 				}
-				return $rs;
 			}
+			$this->cacheWrite($cachekey, $result);
+			return $result;
 		}
 	}
 	
@@ -624,25 +635,28 @@ class DB {
 	}
 	
 	private function cacheRead($cachekey) {
-		if (empty($cachekey)) {
+		global $_W;
+		if (empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
 			return false;
 		}
-		$data = cache_load($cachekey);
+		$data = cache_read($cachekey, true);
 		if (empty($data) || empty($data['data']) || $data['expire'] < TIMESTAMP) {
 			return false;
 		}
 		return $data;
 	}
 	
-	private function cacheWrite($cachekey, $data, $cachetime = 5) {
-		if (empty($data) || empty($cachekey)) {
+	private function cacheWrite($cachekey, $data, $cachetime = 0) {
+		global $_W;
+		$cachetime = empty($cachetime) ? $_W['config']['setting']['memcache']['sql'] : $cachetime;
+		if (empty($data) || empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($cachetime)) {
 			return false;
 		}
 		$cachedata = array(
 			'data' => $data,
 			'expire' => TIMESTAMP + $cachetime,
 		);
-		cache_write($cachekey, $cachedata);
+		cache_write($cachekey, $cachedata, 0, true);
 		return true;
 	}
 	
