@@ -129,9 +129,15 @@ if ($do == 'display') {
 	}
 	if (!empty($_GPC['time']['start'])) {
 		$starttime = strtotime($_GPC['time']['start']);
-		$endtime = strtotime($_GPC['time']['end']) + 86399;
-		$pars[':starttime'] = $starttime;
-		$pars[':endtime'] = $endtime;
+		$endtime = strtotime($_GPC['time']['end']);
+		$endtime = !empty($endtime) ? $endtime + 86399 : 0;
+		
+		if (!empty($starttime)) {
+			$pars[':starttime'] = $starttime;
+		}
+		if (!empty($endtime)) {
+			$pars[':endtime'] = $endtime;
+		}
 	}
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
@@ -147,9 +153,9 @@ if ($do == 'display') {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	}
-
 	$list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pindex - 1) * $psize.",".$psize, $pars);
-
+	echo "SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pindex - 1) * $psize.",".$psize;
+	print_r($pars);
 	if (!empty($list)) {
 		foreach ($list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
