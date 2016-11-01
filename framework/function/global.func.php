@@ -255,7 +255,7 @@ function ijson_encode($value, $options = 0) {
 	if (empty($value)) {
 		return false;
 	}
-	if (version_compare(PHP_VERSION, '5.4.0', '<') && PHP_VERSION != '5.3.29' && $options == JSON_UNESCAPED_UNICODE) {
+	if (version_compare(PHP_VERSION, '5.3.29', '<') && $options == JSON_UNESCAPED_UNICODE) {
 		$json_str = preg_replace("#\\\u([0-9a-f]{4})#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", json_encode($value));
 	} else {
 		$json_str = json_encode($value, $options);
