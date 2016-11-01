@@ -109,15 +109,23 @@ function tpl_form_field_daterange($name, $value = array(), $time = false) {
 ';
 		define('TPL_INIT_DATERANGE_TIME', true);
 	}
-
-	if($value['start']) {
-		$value['starttime'] = empty($time) ? date('Y-m-d',strtotime($value['start'])) : date('Y-m-d H:i',strtotime($value['start']));
+	if ($value['starttime'] !== false && $value['start'] !== false) {
+		if($value['start']) {
+			$value['starttime'] = empty($time) ? date('Y-m-d',strtotime($value['start'])) : date('Y-m-d H:i',strtotime($value['start']));
+		}
+		$value['starttime'] = empty($value['starttime']) ? (empty($time) ? date('Y-m-d') : date('Y-m-d H:i') ): $value['starttime'];
+	} else {
+		$value['starttime'] = '请选择';
 	}
-	if($value['end']) {
-		$value['endtime'] = empty($time) ? date('Y-m-d',strtotime($value['end'])) : date('Y-m-d H:i',strtotime($value['end']));
+	
+	if ($value['endtime'] !== false && $value['end'] !== false) {
+		if($value['end']) {
+			$value['endtime'] = empty($time) ? date('Y-m-d',strtotime($value['end'])) : date('Y-m-d H:i',strtotime($value['end']));
+		}
+		$value['endtime'] = empty($value['endtime']) ? $value['starttime'] : $value['endtime'];
+	} else {
+		$value['endtime'] = '请选择';
 	}
-	$value['starttime'] = empty($value['starttime']) ? (empty($time) ? date('Y-m-d') : date('Y-m-d H:i') ): $value['starttime'];
-	$value['endtime'] = empty($value['endtime']) ? $value['starttime'] : $value['endtime'];
 	$s .= '
 	<input name="'.$name . '[start]'.'" type="hidden" value="'. $value['starttime'].'" />
 	<input name="'.$name . '[end]'.'" type="hidden" value="'. $value['endtime'].'" />

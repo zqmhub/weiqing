@@ -78,7 +78,7 @@
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">关注/取消关注时间</label>
 					<div class="col-sm-9 col-md-8 col-lg-8 col-xs-12">
-						{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime ? $starttime : strtotime('now - 6days')),'endtime'=>date('Y-m-d', $endtime ? $endtime : strtotime('now'))));}
+						{php echo tpl_form_field_daterange('time', array('starttime'=>($starttime ? date('Y-m-d', $starttime) : false),'endtime'=> ($endtime ? date('Y-m-d', $endtime) : false)));}
 					</div>
 					<div class="pull-right col-xs-12 col-sm-3 col-md-2 col-lg-2">
 						<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
