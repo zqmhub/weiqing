@@ -644,21 +644,20 @@ class DB {
 			return false;
 		}
 		$data = cache_read($cachekey, true);
-		if (empty($data) || empty($data['data']) || $data['expire'] < TIMESTAMP) {
+		if (empty($data) || empty($data['data'])) {
 			return false;
 		}
 		return $data;
 	}
 	
-	private function cacheWrite($cachekey, $data, $cachetime = 0) {
+	private function cacheWrite($cachekey, $data) {
 		global $_W;
-		$cachetime = empty($cachetime) ? $_W['config']['setting']['memcache']['sql'] : $cachetime;
-		if (empty($data) || empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($cachetime)) {
+		if (empty($data) || empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
 			return false;
 		}
 		$cachedata = array(
 			'data' => $data,
-			'expire' => TIMESTAMP + $cachetime,
+			'expire' => TIMESTAMP + 2592000,
 		);
 		cache_write($cachekey, $cachedata, 0, true);
 		return true;
