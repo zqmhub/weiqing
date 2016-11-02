@@ -24,7 +24,7 @@
 						{loop $list $page}
 						<tr>
 							<td>{$page['title']}</td>
-							<td>{$page['params'][0]['params']['keyword']}</td>
+							<td>{$page['params'][0]['property'][0]['params']['keyword']}</td>
 							<td>{php echo date('Y-m-d H:i', $page['createtime'])}</td>
 							<td style="position:relative;">
 								<a href="{php echo url('site/editor/design', array('id' => $page['id'], 'multiid' => $multiid))}">编辑</a>
