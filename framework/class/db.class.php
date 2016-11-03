@@ -108,6 +108,10 @@ class DB {
 		if (!$result) {
 			return false;
 		} else {
+			//更新成功后，清空缓存
+			if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert'))) {
+				$this->cacheNameSpace($sql, true);
+			}
 			return $statement->rowCount();
 		}
 	}
@@ -640,27 +644,58 @@ class DB {
 			return false;
 		}
 		$data = cache_read($cachekey, true);
-		if (empty($data) || empty($data['data']) || $data['expire'] < TIMESTAMP) {
+		if (empty($data) || empty($data['data'])) {
 			return false;
 		}
 		return $data;
 	}
 	
-	private function cacheWrite($cachekey, $data, $cachetime = 0) {
+	private function cacheWrite($cachekey, $data) {
 		global $_W;
-		$cachetime = empty($cachetime) ? $_W['config']['setting']['memcache']['sql'] : $cachetime;
-		if (empty($data) || empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($cachetime)) {
+		if (empty($data) || empty($cachekey) || $_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
 			return false;
 		}
 		$cachedata = array(
 			'data' => $data,
-			'expire' => TIMESTAMP + $cachetime,
+			'expire' => TIMESTAMP + 2592000,
 		);
 		cache_write($cachekey, $cachedata, 0, true);
 		return true;
 	}
 	
 	private function cacheKey($sql, $params) {
-		return md5($sql . serialize($params));
+		global $_W;
+		if ($_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
+			return false;
+		}
+		$namespace = $this->cacheNameSpace($sql);
+		if (empty($namespace)) {
+			return false;
+		}
+		return $namespace . ':' . md5($sql . serialize($params));
+	}
+	
+	/**
+	 * SQL缓存以表为为单位增加缓存命名空间，当更新、删除或是插入语句时批量删除此表的缓存
+	 * @param string $sql
+	 * @param boolean $forcenew 是否强制更新命名空间
+	 */
+	private function cacheNameSpace($sql, $forcenew = false) {
+		//获取SQL中的表名
+		$table_prefix = str_replace('`', '', tablename(''));
+		preg_match('/(?!from|insert into|replace into|update) `?('.$table_prefix.'[a-zA-Z0-9_-]+)/i', $sql, $match);
+		$tablename = $match[1];
+		
+		if (empty($tablename)) {
+			return false;
+		}
+		
+		//获取命名空间
+		$namespace = cache_read('dbcache:namespace:'.$tablename, true);
+		if (empty($namespace) || $forcenew) {
+			$namespace = TIMESTAMP;
+			cache_write('dbcache:namespace:'.$tablename, $namespace, 0, true);
+		}
+		return $tablename . ':' . $namespace;
 	}
 }
