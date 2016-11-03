@@ -113,8 +113,8 @@ class PaycenterModuleSite extends WeModuleSite {
 			$starttime = strtotime(date('Y-m-d',strtotime($period . 'day')));
 			$endtime = strtotime(date('Y-m-d'));
 		}
-		$condition = "WHERE uniacid = :uniacid AND status = 1 AND paytime >= :starttime AND paytime <= :endtime";
-		$params = array(':starttime' => $starttime, ':endtime' => $endtime, ':uniacid' => $_W['uniacid']);
+		$condition = "WHERE uniacid = :uniacid AND status = 1 AND paytime >= :starttime AND paytime <= :endtime AND clerk_id = :clerk_id";
+		$params = array(':starttime' => $starttime, ':endtime' => $endtime, ':uniacid' => $_W['uniacid'], ':clerk_id' => intval($_W['user']['clerk_id']));
 		$revenue = pdo_fetchcolumn("SELECT SUM(final_fee) FROM" . tablename('paycenter_order') . $condition, $params);
 		return floatval($revenue);
 	}
