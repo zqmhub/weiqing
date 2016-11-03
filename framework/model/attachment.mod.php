@@ -72,14 +72,13 @@ function attachment_qiniu_auth($key, $secret,$bucket, $district ) {
 }
 function attachment_cos_auth($bucket,$appid, $key, $secret) {
 	require_once(IA_ROOT.'/framework/library/cos/include.php');
-	$appid = is_numeric($appid);
 	if (!is_numeric($appid)) {
 		return error(-1, '传入appid值不合法, 请重新输入');
 	}
-	if (!preg_match('/[a-zA-Z0-9]{36}/', $key)) {
+	if (!preg_match('/^[a-zA-Z0-9]{36}$/', $key)) {
 		return error(-1, '传入secretid值不合法，请重新传入');
 	}
-	if (!preg_match('/[a-zA-Z0-9]{32}/', $secret)) {
+	if (!preg_match('/^[a-zA-Z0-9]{32}$/', $secret)) {
 		return error(-1, '传入secretkey值不合法，请重新传入');
 	}
 	$con = $original = file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php');
