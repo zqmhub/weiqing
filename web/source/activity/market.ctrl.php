@@ -8,6 +8,7 @@ $_W['page']['title'] = '卡券营销';
 load()->model('activity');
 load()->model('mc');
 load()->classs('coupon');
+set_time_limit(0);
 $dos = array('list', 'post', 'delete', 'get_member_num', 'checkcoupon');
 $do = in_array($do, $dos) ? $do : 'list';
 if ($do == 'checkcoupon') {
@@ -110,12 +111,11 @@ elseif ($do == 'post') {
 					$param['end'] = strtotime($_GPC['daterange']['end']);
 				}
 				if ($post['members'][0] == 'group_member') {
-					$param['groupid'] = intval($_GPC['group']);
+					$param['groupid'] = intval($_GPC['groupid']);
 				}
 				$openids = activity_get_member($post['members'][0], $param);
 				$openids = $openids['members'];
 				$account_api = WeAccount::create();
-				set_time_limit(300);
 				foreach ($post['coupons'] as $coupon) {
 					$post['members'] = serialize($post['members']);
 					$post['coupons'] = serialize($post['coupons']);

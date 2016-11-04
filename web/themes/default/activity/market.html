@@ -230,7 +230,7 @@
 							</ul>
 						</div>
 						<div class="panel-body" id="type">
-							<select name="group" class="form-control" id="group_list" {if !$item['members']['groupid']}style="display: none;"{/if}>
+							<select name="groupid" class="form-control" id="group_list" {if !$item['members']['groupid']}style="display: none;"{/if}>
 							{loop $groups $group}
 							<option value="{$group['id']}">{if COUPON_TYPE == SYSTEM_COUPON}{$group['title']}{else}{$group['name']}{/if}</option>
 							{/loop}
@@ -299,7 +299,7 @@
 		if (type == 'group_member' || type == 'openids' || type == 'cash_time') {
 			var param = {};
 			if (type == 'group_member') {
-				var groupid = $('[name="group"]').val();
+				var groupid = $('[name="groupid"]').val();
 				param = {'groupid' : groupid};
 			}
 			if (type == 'cash_time') {
