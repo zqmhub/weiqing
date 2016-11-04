@@ -69,8 +69,8 @@ function template_page($id, $flag = TEMPLATE_DISPLAY) {
 
 function template($filename, $flag = TEMPLATE_DISPLAY) {
 	global $_W, $_GPC;
-	static $include_file_lists = array();
-	if (in_array($filename, $include_file_lists)) {
+	static $include_file_list = array();
+	if (in_array($filename, $include_file_list)) {
 		return;
 	}
 	$source = IA_ROOT . "/app/themes/{$_W['template']}/{$filename}.html";
@@ -95,7 +95,7 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 	if(DEVELOPMENT || !is_file($compile) || filemtime($source) > filemtime($compile)) {
 		template_compile($source, $compile);
 	}
-	$include_file_lists[] = $filename;
+	$include_file_list[] = $filename;
 	switch ($flag) {
 		case TEMPLATE_DISPLAY:
 		default:
