@@ -303,8 +303,23 @@ if ($do == 'manage') {
 		$where .= " AND (b.mobile LIKE '%{$keyword}%' OR b.realname LIKE '%{$keyword}%')";
 	}
 	$sql = 'SELECT a.*, b.realname, b.groupid, b.credit1, b.credit2, b.mobile FROM ' . tablename('mc_card_members') . " AS a LEFT JOIN " . tablename('mc_members') . " AS b ON a.uid = b.uid WHERE a.uniacid = :uniacid $where ORDER BY a.id DESC LIMIT ".($pindex - 1) * $psize.','.$psize;
-	$list = pdo_fetchall($sql, $param);
+	$list = pdo_fetchall($sql, $param, 'uid');
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_card_members') . " AS a LEFT JOIN " . tablename('mc_members') . " AS b ON a.uid = b.uid WHERE a.uniacid = :uniacid $where", $param);
+	$core_paylog_data = pdo_getall('core_paylog', array('uniacid' => $_W['uniacid'], 'status' => '1', 'openid !=' => ''), '', 'openid');
+	foreach ($core_paylog_data as $key => $value) {
+		if (!empty(is_numeric($key))) {
+			$uid = $key;
+		} else {
+			$fans_info = mc_fansinfo($key, '', $_W['uniacid']);
+			if (!empty($fans_info['uid'])) {
+				$uid = $fans_info['uid'];
+			}
+		}
+		$members_consume_stat[$uid] = $value; 
+	}
+	echo "<pre>";
+	print_r($list);
+	echo "</pre>";
 	$pager = pagination($total, $pindex, $psize);
 	template('mc/card');
 }
