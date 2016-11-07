@@ -69,10 +69,6 @@ function template_page($id, $flag = TEMPLATE_DISPLAY) {
 
 function template($filename, $flag = TEMPLATE_DISPLAY) {
 	global $_W, $_GPC;
-	static $include_file_list = array();
-	if (in_array($filename, $include_file_list)) {
-		return;
-	}
 	$source = IA_ROOT . "/app/themes/{$_W['template']}/{$filename}.html";
 	$compile = IA_ROOT . "/data/tpl/app/{$_W['template']}/{$filename}.tpl.php";
 	if(!is_file($source)) {
@@ -95,7 +91,6 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 	if(DEVELOPMENT || !is_file($compile) || filemtime($source) > filemtime($compile)) {
 		template_compile($source, $compile);
 	}
-	$include_file_list[] = $filename;
 	switch ($flag) {
 		case TEMPLATE_DISPLAY:
 		default:
@@ -129,7 +124,7 @@ function template_compile($from, $to) {
 
 function template_parse($str) {
 	$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
-	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
+	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str, 1);
 	$str = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $str);
 	$str = preg_replace('/{if\s+(.+?)}/', '<?php if($1) { ?>', $str);
 	$str = preg_replace('/{else}/', '<?php } else { ?>', $str);
