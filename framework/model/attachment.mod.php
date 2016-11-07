@@ -72,7 +72,16 @@ function attachment_qiniu_auth($key, $secret,$bucket, $district ) {
 }
 function attachment_cos_auth($bucket,$appid, $key, $secret) {
 	require_once(IA_ROOT.'/framework/library/cos/include.php');
-	$con = file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php');
+	if (!is_numeric($appid)) {
+		return error(-1, '传入appid值不合法, 请重新输入');
+	}
+	if (!preg_match('/^[a-zA-Z0-9]{36}$/', $key)) {
+		return error(-1, '传入secretid值不合法，请重新传入');
+	}
+	if (!preg_match('/^[a-zA-Z0-9]{32}$/', $secret)) {
+		return error(-1, '传入secretkey值不合法，请重新传入');
+	}
+	$con = $original = file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php');
 	$con = preg_replace('/const[\s]APPID[\s]=[\s]\'.*\';/', 'const APPID = \''.$appid.'\';', $con);
 	$con = preg_replace('/const[\s]SECRET_ID[\s]=[\s]\'.*\';/', 'const SECRET_ID = \''.$key.'\';', $con);
 	$con = preg_replace('/const[\s]SECRET_KEY[\s]=[\s]\'.*\';/', 'const SECRET_KEY = \''.$secret.'\';', $con);
@@ -93,6 +102,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret) {
 				$message = '输入的bucket有误';
 				break;
 		}
+		file_put_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php', $original);
 		return error(-1, $message);
 	}
 	return true;

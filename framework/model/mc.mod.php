@@ -1698,6 +1698,7 @@ function mc_init_fans_info($old_fan_info){
 			'followtime' => $fan['subscribe_time'],
 			'nickname' => stripcslashes($fan['nickname']),
 			'tag' => base64_encode(iserializer($fan)),
+			'unionid' => $fan['unionid'],
 			'groupid' => !empty($fan['tagid_list']) ? (','.join(',', $fan['tagid_list']).',') : '',
 		);
 		if (!empty($fan['tagid_list'])) {

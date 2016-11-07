@@ -20,10 +20,20 @@
 			<form action="./index.php" method="get" class="form-horizontal" role="form">
 				<input type="hidden" name="c" value="mc" />
 				<input type="hidden" name="a" value="fans" />
+				<input type="hidden" name="searchmod" value="{{config.searchMod.value}}" />
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">昵称/openid</label>
 					<div class="col-sm-9 col-md-8 col-lg-8 col-xs-12">
-						<input type="text" class="form-control" name="nickname" value="{$nickname}"/>
+						<div class="input-group">
+							<div class="input-group-btn">
+								<button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" aria-expanded="false">{{config.searchMod.title}} <span class="caret"></span></button>
+								<ul role="menu" class="dropdown-menu">
+									<li><a href="javascript:;" ng-click="switchSearchMod(1)">精确</a></li>
+									<li><a href="javascript:;" ng-click="switchSearchMod(2)">模糊</a></li>
+								</ul>
+							</div>
+							<input type="text" class="form-control" name="nickname" value="{$nickname}" />
+						</div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -78,7 +88,7 @@
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">关注/取消关注时间</label>
 					<div class="col-sm-9 col-md-8 col-lg-8 col-xs-12">
-						{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime ? $starttime : strtotime('now - 6days')),'endtime'=>date('Y-m-d', $endtime ? $endtime : strtotime('now'))));}
+						{php echo tpl_form_field_daterange('time', array('starttime'=>($starttime ? date('Y-m-d', $starttime) : false),'endtime'=> ($endtime ? date('Y-m-d', $endtime) : false)));}
 					</div>
 					<div class="pull-right col-xs-12 col-sm-3 col-md-2 col-lg-2">
 						<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
@@ -170,10 +180,11 @@
 		angular.module('fansApp').value('config', {
 			'enabled' : {if $_W['acid'] && $_W['account']['level'] >= ACCOUNT_SUBSCRIPTION_VERIFY}true{else}false{/if},
 			'tags' :  {php echo !empty($fans_tag) ? json_encode($fans_tag) : 'null'},
-			'curTagid' : {$tag_selected_id},
+			'curTagid' : '{$tag_selected_id}',
 			'syncUrl' : "{php echo url('mc/fans/initsync', array('acid' => $acid))}",
 			'url' : '{php echo url("mc/fans/tag");}',
-			'batchUrl' : "{php echo url('mc/fans/tag', array('acid' => $acid))}"
+			'batchUrl' : "{php echo url('mc/fans/tag', array('acid' => $acid))}",
+			'searchMod' : {title : '精确', value : '1'}
 		});
 		angular.bootstrap(document, ['fansApp']);
 	});

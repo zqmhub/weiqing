@@ -30,11 +30,11 @@
 		</div>
 		<div class="card-info">
 			<div class="mui-text-center">
-				<span class="vip" style="color:{if !empty($setting['color']['rank'])}{$setting['color']['rank']}{/if}">VIP</span>
-				<span class="card-rank" style="color:{if !empty($setting['color']['rank'])}{$setting['color']['rank']}{/if}">{$_W['member']['groupname']}</span>
+				<span class="vip" style="color:{if !empty($setting['color'])}{$setting['color']}{/if}">VIP</span>
+				<span class="card-rank" style="color:{if !empty($setting['color'])}{$setting['color']}{/if}">{$_W['member']['groupname']}</span>
 			</div>
 			{if !$setting['format_type']}
-			<div class="card-no mui-text-right" style="color:{if !empty($setting['color']['number'])}{$setting['color']['number']}{/if}">会员卡号:<span style="color: #fff;">{$setting['format']}</span></div>
+			<div class="card-no mui-text-right">会员卡号:<span style="color: #fff;">{$setting['format']}</span></div>
 			{/if}
 		</div>
 	</div>
@@ -117,10 +117,10 @@
 			</div>
 			<div class="card-info">
 				<div class="mui-text-center">
-						<span class="vip" style="color:{if !empty($setting['color']['rank'])}{$setting['color']['rank']}{/if}">VIP</span>
-						<span class="card-rank" style="color:{if !empty($setting['color']['rank'])}{$setting['color']['rank']}{/if}">{$_W['member']['groupname']}</span>
+						<span class="vip" style="color:{if !empty($setting['color'])}{$setting['color']}{/if}">VIP</span>
+						<span class="card-rank" style="color:{if !empty($setting['color'])}{$setting['color']}{/if}">{$_W['member']['groupname']}</span>
 				</div>
-					<div class="card-no mui-text-right">会员卡号:<span style="color:{if !empty($setting['color']['number'])}{$setting['color']['number']}{/if}">{$mcard['cardsn']}</span></div>
+					<div class="card-no mui-text-right">会员卡号:<span>{$mcard['cardsn']}</span></div>
 			</div>
 		</a>
 	</div>

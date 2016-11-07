@@ -30,5 +30,5 @@ local.properties
 data/**/*
 attachment/**/*
 !attachment/images/global/**/*
-addons/we7_gs/*
+addons/**/*
 web/test.php

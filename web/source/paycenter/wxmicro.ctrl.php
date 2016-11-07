@@ -15,6 +15,8 @@ if($do == 'pay') {
 		$fee = trim($post['fee']) ? trim($post['fee']) : message(error(-1, '订单金额不能为空'),  '', 'ajax');
 		$body = trim($post['body']) ? trim($post['body']) : message(error(-1, '商品名称不能为空'),  '', 'ajax');
 		$code = trim($post['code']);
+		$uid = intval($post['member']['uid']);
+		
 		if($post['cash'] > 0 && empty($post['code'])) {
 			message(error(-1, '授权码不能为空'), '', 'ajax');
 		}
@@ -23,9 +25,8 @@ if($do == 'pay') {
 			message(error(-1, '消费金额不能为空'), '', 'ajax');
 		}
 		$log = "系统日志:会员消费【{$total}】元";
-		
-		if($post['member']['uid'] > 0) {
-			$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $post['member']['uid']));
+		if($uid > 0) {
+			$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid));
 			if(empty($user)) {
 				message(error(-1, '用户不存在'), '', 'ajax');
 			}

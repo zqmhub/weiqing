@@ -101,15 +101,14 @@ if ($do == 'display') {
 	$fans_tag = mc_fans_groups(true);
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 50;
-	$pars = array();
-	$pars[':uniacid'] = $_W['uniacid'];
-	$pars[':acid'] = $_W['acid'];
+	
+	$params = array(
+		':uniacid' => $_W['uniacid'],
+		':acid' => $_W['acid'],
+	);
+	$sql = "SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f";
 	$condition = " WHERE f.`uniacid` = :uniacid AND f.`acid` = :acid";
-	$tag_selected_id = $_GPC['tag_selected_id'] ? $_GPC['tag_selected_id'] : 0;
-	if (!empty($_GPC['tag_selected_id'])) {
-		$pars[':tagid'] = $tag_selected_id;
-		$condition .= " AND m.`tagid` = :tagid";
-	}
+	
 	if ($_GPC['type'] == 'bind') {
 		$condition .= " AND f.`uid` > 0";
 		$type = 'bind';
@@ -117,25 +116,39 @@ if ($do == 'display') {
 		$condition .= " AND f.`uid` = 0";
 		$type = 'unbind';
 	}
-	$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
-	if (!empty($nickname)) {
-		$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` = :openid))";
-		$pars[':nickname'] = "%".$nickname."%";
-		$pars[':openid'] = $nickname;
+	if (!empty($_GPC['nickname'])) {
+		$searchmod = intval($_GPC['searchmod']);
+		$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
+		
+		if ($searchmod == 1) {
+			$condition .= " AND ((f.`nickname` = :nickname) OR (f.`openid` = :openid))";
+			$params[':nickname'] = $nickname;
+			$params[':openid'] = $nickname;
+		} else {
+			$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` LIKE :openid))";
+			$params[':nickname'] = "%{$nickname}%";
+			$params[':openid'] = "%{$nickname}%";
+		}
 	}
 	if (!empty($_GPC['uid'])) {
 		$condition .= " AND f.uid = :uid ";
-		$pars[':uid'] = intval($_GPC['uid']);
+		$params[':uid'] = intval($_GPC['uid']);
 	}
 	if (!empty($_GPC['time']['start'])) {
 		$starttime = strtotime($_GPC['time']['start']);
-		$endtime = strtotime($_GPC['time']['end']) + 86399;
-		$pars[':starttime'] = $starttime;
-		$pars[':endtime'] = $endtime;
+		$endtime = strtotime($_GPC['time']['end']);
+		$endtime = !empty($endtime) ? $endtime + 86399 : 0;
+		
+		if (!empty($starttime)) {
+			$params[':starttime'] = $starttime;
+		}
+		if (!empty($endtime)) {
+			$params[':endtime'] = $endtime;
+		}
 	}
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
-		$orderby = " ORDER BY f.`followtime` DESC";
+		$orderby = " ORDER BY f.`fanid` DESC";
 		$condition .= " AND f.`follow` = 1";
 		if (!empty($starttime)) {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
@@ -147,9 +160,12 @@ if ($do == 'display') {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	}
-
-	$list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pindex - 1) * $psize.",".$psize, $pars);
-
+	if (!empty($_GPC['tag_selected_id'])) {
+		$sql .= " LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`";
+		$condition .= " AND m.`tagid` = :tagid GROUP BY f.`fanid`";
+		$params[':tagid'] = $tag_selected_id = intval($_GPC['tag_selected_id']);
+	}
+	$list = pdo_fetchall($sql . $condition . $orderby . " LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
 	if (!empty($list)) {
 		foreach ($list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
@@ -200,7 +216,7 @@ if ($do == 'display') {
 			unset($user,$niemmo,$niemmo_effective);
 		}
 	}
-	$total = pdo_fetchcolumn("SELECT COUNT(DISTINCT f.`fanid`) FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping').' AS m ON m.`fanid` = f.`fanid`'.$condition, $pars);
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " .tablename('mc_mapping_fans')." AS f" . $condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
 }
