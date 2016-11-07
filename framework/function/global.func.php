@@ -255,12 +255,15 @@ function ijson_encode($value, $options = 0) {
 	if (empty($value)) {
 		return false;
 	}
-	if (version_compare(PHP_VERSION, '5.3.29', '<') && $options == JSON_UNESCAPED_UNICODE) {
-		$json_str = preg_replace("#\\\u([0-9a-f]{4})#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", json_encode($value));
+	if (version_compare(PHP_VERSION, '5.4.0', '<') && $options == JSON_UNESCAPED_UNICODE) {
+		$str = json_encode($value);
+		$json_str = preg_replace_callback("#\\\u([0-9a-f]{4})#i", function($matchs){
+			return iconv('UCS-2BE', 'UTF-8', pack('H4', $matchs[1]));
+			}, $str);
 	} else {
 		$json_str = json_encode($value, $options);
 	}
-	return addcslashes($json_str, "\\\'\"");
+	return addslashes($json_str, "\\\'\"");
 }
 
 /**
@@ -751,7 +754,7 @@ function istrlen($string, $charset = '') {
 	if (strtolower($charset) == 'gbk') {
 		$charset = 'gbk';
 	} else {
-		$charset = 'utf-8';
+		$charset = 'utf8';
 	}
 	if (function_exists('mb_strlen')) {
 		return mb_strlen($string, $charset);
@@ -759,7 +762,7 @@ function istrlen($string, $charset = '') {
 		$n = $noc = 0;
 		$strlen = strlen($string);
 
-		if ($charset == 'utf-8') {
+		if ($charset == 'utf8') {
 
 			while ($n < $strlen) {
 				$t = ord($string[$n]);
