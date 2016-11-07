@@ -121,7 +121,7 @@ class coupon extends WeiXinAccount {
 				'base_info' => $data,
 			),
 		);
-		$post = stripslashes(urldecode(ijson_encode($post, JSON_UNESCAPED_UNICODE)));
+		$post = stripcslashes(urldecode(ijson_encode($post, JSON_UNESCAPED_UNICODE)));
 		$url = "http://api.weixin.qq.com/cgi-bin/poi/addpoi?access_token={$token}";
 		$result = $this->requestApi($url, $post);
 		return $result;
@@ -275,7 +275,7 @@ class coupon extends WeiXinAccount {
 		}
 		$url = "https://api.weixin.qq.com/card/create?access_token={$token}";
 		load()->func('communication');
-		$card = stripslashes(urldecode(ijson_encode($card, JSON_UNESCAPED_UNICODE)));
+		$card = stripcslashes(urldecode(ijson_encode($card, JSON_UNESCAPED_UNICODE)));
 		$response = $this->requestApi($url, $card);
 		return $response;
 	}

@@ -99,7 +99,7 @@ if ($do == 'design') {
 			'description' => $page['params']['description'],
 			'type' => 3,
 			'status' => 1,
-			'params' => stripslashes(ijson_encode($params, JSON_UNESCAPED_UNICODE)),
+			'params' => stripcslashes(ijson_encode($params, JSON_UNESCAPED_UNICODE)),
 			'html' => $html,
 			'createtime' => TIMESTAMP,
 		);
