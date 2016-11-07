@@ -772,10 +772,6 @@ abstract class WeBase {
 	 */
 	protected function template($filename) {
 		global $_W;
-		static $include_file_list = array();
-		if (in_array($filename, $include_file_list)) {
-			return;
-		}
 		$name = strtolower($this->modulename);
 		$defineDir = dirname($this->__define);
 		if(defined('IN_SYS')) {
@@ -821,7 +817,6 @@ abstract class WeBase {
 		if (DEVELOPMENT || !is_file($compile) || filemtime($source) > filemtime($compile)) {
 			template_compile($source, $compile, true);
 		}
-		$include_file_list[] = $filename;
 		return $compile;
 	}
 }
