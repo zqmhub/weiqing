@@ -31,3 +31,4 @@ data/**/*
 attachment/**/*
 !attachment/images/global/**/*
 addons/we7_gs/*
+web/test.php

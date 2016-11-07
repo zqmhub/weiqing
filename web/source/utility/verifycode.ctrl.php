@@ -60,7 +60,7 @@ if($receiver_type == 'email') {
 		exit($r['message']);
 	}
 	$setting = uni_setting($_W['uniacid'], 'notify');
-	$content = "您的短信验证码为: {$code} 您正在使用{$uniacid_arr['name']}相关功能, 需要你进行身份确认. ".random(3);
+	$content = "您的短信验证码为: {$code} 您正在使用{$uniacid_arr['name']}相关功能, 需要你进行身份确认";
 	$result = cloud_sms_send($receiver, $content);
 }
 

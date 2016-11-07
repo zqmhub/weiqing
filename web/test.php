@@ -14,6 +14,9 @@ load()->model('frame');
 load()->model('cloud');
 load()->classs('coupon');
 
-echo tomedia('//taobao.com测试');
+
+$content = '您的短信验证码为: 238924 您正在使用瓷都圈相关功能, 需要你进行身份确认';
+cloud_sms_send('13734004544', $content);
+echo '发送成功';
 exit;
 print_r(parse_url('http://wx.panomall.com/web/index.php?c=material&a=mass&do=cron&id=47'));
