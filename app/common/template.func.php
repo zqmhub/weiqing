@@ -124,7 +124,17 @@ function template_compile($from, $to) {
 
 function template_parse($str) {
 	$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
-	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str, 1);
+	$include_template_list = preg_match_all('/{template\s+(.+?)}/i', $str, $match);
+	$file_sum = array_count_values($match[0]);
+	foreach ($match[0] as $key => $filename) {
+		if ($include_num[$filename] == 0) {
+			$template_name = str_replace("'", "", $match[1][$key]);
+			$template_pattern = "{template '" . $template_name ."'}";
+			$replace = '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template("' . $template_name . '", TEMPLATE_INCLUDEPATH)) : (include template("' . $template_name . '", TEMPLATE_INCLUDEPATH));?>';
+			$str = preg_replace($template_pattern, $replace, $str, 1);
+			$include_num[$filename]++;
+		}
+	}
 	$str = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $str);
 	$str = preg_replace('/{if\s+(.+?)}/', '<?php if($1) { ?>', $str);
 	$str = preg_replace('/{else}/', '<?php } else { ?>', $str);
