@@ -101,6 +101,10 @@ if ($do == 'fetch') {
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
 	$pathname = $setting['folder'] . $filename;
 	$fullname = ATTACHMENT_ROOT . '/' . $pathname;
+	
+	$pathinfo = pathinfo($fullname);
+	mkdirs($pathinfo['dirname']);
+	
 	if (file_put_contents($fullname, $resp['content']) == false) {
 		$result['message'] = '提取失败.';
 		die(json_encode($result));
