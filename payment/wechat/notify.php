@@ -50,6 +50,10 @@ if(is_array($setting['payment'])) {
 		}
 
 		$wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
+		if ($wechat['switch'] == '3') {
+			$pay_setting = uni_setting($wechat['service'], array('payment'));
+			$wechat['signkey'] = $pay_setting['payment']['wechat_facilitator']['signkey'];
+		}
 		$sign = strtoupper(md5($string1 . "key={$wechat['signkey']}"));
 		if($sign == $get['sign']) {
 			$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniontid`=:uniontid';
