@@ -476,7 +476,6 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 
 	if ($context['isajax']) {
 		if (!$url) {
-			$url = $_W['script_name'] . '?' . http_build_query($_GET);
             $pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . '?' . http_build_query($_GET) . '\', \'' . $pdata['findex'] . '\', this);return false;"' : '');
             $pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . '?' . http_build_query($_GET) . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : '');
             $pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . '?' . http_build_query($_GET) . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : '');
