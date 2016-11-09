@@ -123,14 +123,14 @@ function template_compile($from, $to) {
 }
 
 function template_parse($str) {
-	//检查是否重复包含头和尾
 	$check_repeat_template = array(
 		"'common\\/header'",
 		"'common\\/footer'",
 	);
 	foreach ($check_repeat_template as $template) {
 		if (preg_match_all('/{template\s+'.$template.'}/', $str, $match) > 1) {
-			$str = preg_replace('/{template\s+'.$template.'}/i', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('.$template.', TEMPLATE_INCLUDEPATH)) : (include template('.$template.', TEMPLATE_INCLUDEPATH));?>', $str, 1);
+			$replace = stripslashes($template);
+			$str = preg_replace('/{template\s+'.$template.'}/i', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('.$replace.', TEMPLATE_INCLUDEPATH)) : (include template('.$replace.', TEMPLATE_INCLUDEPATH));?>', $str, 1);
 			$str = preg_replace('/{template\s+'.$template.'}/i', '', $str);
 		}
 	}
