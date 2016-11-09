@@ -263,7 +263,7 @@ function ijson_encode($value, $options = 0) {
 	} else {
 		$json_str = json_encode($value, $options);
 	}
-	return addslashes($json_str, "\\\'\"");
+	return addslashes($json_str);
 }
 
 /**
