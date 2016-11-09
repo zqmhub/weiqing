@@ -523,7 +523,7 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 		}
 		for ($i = $range['start']; $i <= $range['end']; $i++) {
 			if ($context['isajax']) {
-				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $i . '\', this);return false;"' : '');
+				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $i . '\', this);return false;"' : '');
 			} else {
 				if ($url) {
 					$aa = 'href="?' . str_replace('*', $i, $url) . '"';
