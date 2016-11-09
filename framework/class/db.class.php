@@ -109,7 +109,7 @@ class DB {
 			return false;
 		} else {
 			//更新成功后，清空缓存
-			if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert'))) {
+			if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
 				$this->cacheNameSpace($sql, true);
 			}
 			return $statement->rowCount();

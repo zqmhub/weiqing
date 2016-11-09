@@ -46,7 +46,7 @@ function cron_run($id) {
 	load()->func('communication');
 	$urlset = parse_url($_W['siteurl']);
 	$urlset = pathinfo($urlset['path']);
-	$response = ihttp_request('//127.0.0.1/'. $urlset['dirname'] . '/' . url('cron/entry', array('id' => $cron['cloudid'])), array(), $extra);
+	$response = ihttp_request($_W['sitescheme'] . '127.0.0.1/'. $urlset['dirname'] . '/' . url('cron/entry', array('id' => $cron['cloudid'])), array(), $extra);
 	$response = json_decode($response['content'], true);
 	if (is_error($response['message'])) {
 		return $response['message'];

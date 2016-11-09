@@ -972,7 +972,7 @@ class WeiXinAccount extends WeAccount {
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/tags/create?access_token={$token}";
 		// json_encode()会将中文转为unicode编码，5.4+提供了 JSON_UNESCAPED_UNICODE
-		$data = stripcslashes(ijson_encode(array('tag' => array('name' => $tagname)), JSON_UNESCAPED_UNICODE));
+		$data = stripslashes(ijson_encode(array('tag' => array('name' => $tagname)), JSON_UNESCAPED_UNICODE));
 		$result = $this->requestApi($url, $data);
 		return $result;
 	}
@@ -1022,7 +1022,7 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/tags/update?access_token={$token}";
-		$data = stripcslashes(ijson_encode(array('tag' => array('id' => $tagid, 'name' => $tagname)), JSON_UNESCAPED_UNICODE));
+		$data = stripslashes(ijson_encode(array('tag' => array('id' => $tagid, 'name' => $tagname)), JSON_UNESCAPED_UNICODE));
 		$result = $this->requestApi($url, $data);
 		return $result;
 	}
