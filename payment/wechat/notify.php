@@ -49,7 +49,7 @@ if(is_array($setting['payment'])) {
 			}
 		}
 
-		if ($wechat['switch'] == '3') {
+		if (intval($wechat['switch']) == 3) {
 			$facilitator_setting = uni_setting($wechat['service'], array('payment'));
 			$wechat['signkey'] = $facilitator_setting['payment']['wechat_facilitator']['signkey'];
 		} else {
