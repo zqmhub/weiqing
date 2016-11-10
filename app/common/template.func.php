@@ -123,6 +123,17 @@ function template_compile($from, $to) {
 }
 
 function template_parse($str) {
+	$check_repeat_template = array(
+		"'common\\/header'",
+		"'common\\/footer'",
+	);
+	foreach ($check_repeat_template as $template) {
+		if (preg_match_all('/{template\s+'.$template.'}/', $str, $match) > 1) {
+			$replace = stripslashes($template);
+			$str = preg_replace('/{template\s+'.$template.'}/i', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('.$replace.', TEMPLATE_INCLUDEPATH)) : (include template('.$replace.', TEMPLATE_INCLUDEPATH));?>', $str, 1);
+			$str = preg_replace('/{template\s+'.$template.'}/i', '', $str);
+		}
+	}
 	$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
 	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
 	$str = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $str);
