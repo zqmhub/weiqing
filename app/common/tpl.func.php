@@ -23,7 +23,6 @@ function _tpl_form_field_date($name, $values = '', $withtime = false) {
 				$(document).on("tap", ".mui-calendar-picker", function(){
 					var $this = $(this);
 					util.datepicker({type: "date", beginYear: 1960, endYear: 2016}, function(rs){
-						console.dir(rs)
 						$this.val(rs.value)
 						.next().val(rs.value)
 					});
