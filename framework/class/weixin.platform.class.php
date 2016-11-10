@@ -204,7 +204,7 @@ class WeiXinPlatform extends WeiXinAccount {
 				'value' => $response['ticket'],
 				'expire' => TIMESTAMP + $response['expires_in'] - 200,
 			);
-			cache_write('account:jsapi_ticket', $js_ticket);
+			cache_write($cachekey, $js_ticket);
 		}
 		$this->account['jsapi_ticket'] = $js_ticket;
 		return $js_ticket['value'];
