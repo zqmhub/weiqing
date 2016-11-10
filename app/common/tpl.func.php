@@ -5,15 +5,33 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-function _tpl_form_field_date($name, $value = '', $withtime = false) {
-	if (empty($value)) {
-		$value = array(
+function _tpl_form_field_date($name, $values = '', $withtime = false) {
+	if (empty($values)) {
+		$values = array(
 			'year' => date('Y', time()),
 			'month' => date('m', time()),
 			'day' => date('d', time())
 		);
 	}
-	return tpl_app_form_field_calendar($name, $value);
+	$value = (empty($values['year']) || empty($values['month']) || empty($values['day'])) ? '' : implode('-', $values);
+	$html = '';
+	$html .= '<input class="mui-calendar-picker" type="text" placeholder="请选择日期" readonly value="' . $value . '" name="' . $name . '" />';
+	$html .= '<input type="hidden" value="' . $values['year'] . '-' . $values['month'] . '-' . $values['day'] . '" name="' . $name . '"/>';
+	if (!defined('TPL_INIT_CALENDAR')) {
+		$html .= '
+			<script type="text/javascript">
+				$(document).on("tap", ".mui-calendar-picker", function(){
+					var $this = $(this);
+					util.datepicker({type: "date", beginYear: 1960, endYear: 2016}, function(rs){
+						console.dir(rs)
+						$this.val(rs.value)
+						.next().val(rs.value)
+					});
+				});
+			</script>';
+		define('TPL_INIT_CALENDAR', true);
+	}
+	return $html;
 }
 
 function tpl_app_fans_form($field, $value = '', $placeholder = '') {
