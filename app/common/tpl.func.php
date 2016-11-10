@@ -6,17 +6,9 @@
 defined('IN_IA') or exit('Access Denied');
 
 function _tpl_form_field_date($name, $values = '', $withtime = false) {
-	if (empty($values)) {
-		$values = array(
-			'year' => date('Y', time()),
-			'month' => date('m', time()),
-			'day' => date('d', time())
-		);
-	}
-	$value = (empty($values['year']) || empty($values['month']) || empty($values['day'])) ? '' : implode('-', $values);
 	$html = '';
-	$html .= '<input class="mui-calendar-picker" type="text" placeholder="请选择日期" readonly value="' . $value . '" name="' . $name . '" />';
-	$html .= '<input type="hidden" value="' . $values['year'] . '-' . $values['month'] . '-' . $values['day'] . '" name="' . $name . '"/>';
+	$html .= '<input class="mui-calendar-picker" type="text" placeholder="请选择日期" readonly value="' . $values . '" name="' . $name . '" />';
+	$html .= '<input type="hidden" value="' . $values . '" name="' . $name . '"/>';
 	if (!defined('TPL_INIT_CALENDAR')) {
 		$html .= '
 			<script type="text/javascript">
