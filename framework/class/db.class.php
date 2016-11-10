@@ -681,6 +681,10 @@ class DB {
 	 * @param boolean $forcenew 是否强制更新命名空间
 	 */
 	private function cacheNameSpace($sql, $forcenew = false) {
+		global $_W;
+		if ($_W['config']['setting']['cache'] != 'memcache') {
+			return false;
+		}
 		//获取SQL中的表名
 		$table_prefix = str_replace('`', '', tablename(''));
 		preg_match('/(?!from|insert into|replace into|update) `?('.$table_prefix.'[a-zA-Z0-9_-]+)/i', $sql, $match);
