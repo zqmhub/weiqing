@@ -18,7 +18,7 @@
 		</li>
 		{/if}
 		<li class="mui-table-view-cell">
-			您需要支付<span class="mui-pull-right mui-text-success mui-big mui-rmb">{php echo sprintf('%.2f', $params['fee']);} 元</span>
+			商品价格<span class="mui-pull-right mui-text-success mui-big mui-rmb">{$params['fee']} 元</span>
 		</li>
 	</ul>
 	{if !empty($token) || !empty($coupon)}
@@ -52,6 +52,11 @@
 		{/if}
 	</ul>
 	{/if}
+	<ul class="mui-table-view">
+		<li class="mui-table-view-cell mui-table-view-chevron">
+			还需支付<span class="mui-pull-right mui-text-success mui-big mui-rmb js-need-pay" data-price="{php echo sprintf('%.2f', $params['fee']);}">{php echo sprintf('%.2f', $params['fee']);} 元</span>
+		</li>
+	</ul>
 	<h5 class="mui-desc-title mui-pl10">选择支付方式</h5>
 	<ul class="mui-table-view mui-table-view-chevron">
 		{if !empty($pay['credit']['switch'])}
@@ -289,7 +294,9 @@
 	}
 	$(document).on('click', '.js-submit', function() {
 		var checked_card = $('input[name="couponid"]').val();
+		var price = $('.js-need-pay').data('price');
 		if(checked_card && cards_str[checked_card]) {
+			need_pay = (price - cards_str[checked_card].discount_cn).toFixed(2);
 			if (cards_str[checked_card].type == '1') {
 				$('.js-coupon .js-card-info').html('已抵用'+cards_str[checked_card].discount_cn+'元');
 				$('.js-token .js-card-info').html('未使用');
@@ -298,9 +305,11 @@
 				$('.js-token .js-card-info').html('已抵用'+cards_str[checked_card].discount_cn+'元');
 				$('.js-coupon .js-card-info').html('未使用');
 			};
+			$('.js-need-pay').html(need_pay + ' 元');
 			$('.js-pay input[name="coupon_id"]').val(checked_card);
 			$('.js-pay input[name="code"]').val(cards_str[checked_card]['code']);
 		} else {
+			$('.js-need-pay').html(price + ' 元');
 			$('.js-token .js-card-info').html('未使用');
 			$('.js-coupon .js-card-info').html('未使用');
 			$('.js-pay input[name="coupon_id"]').val(0);
