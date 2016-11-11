@@ -11,7 +11,7 @@ load()->model('mc');
 if (!uni_user_permission_check('activity_coupon_display', false) && !uni_user_permission_check('activity_token_display', false)) {
 	message('您没有进行该操作的权限', referer(), 'error');
 }
-$dos = array('display', 'post', 'del', 'detail', 'toggle', 'modifystock', 'sync', 'selfconsume', 'publish', 'exchange_coupon_type');
+$dos = array('display', 'post', 'del', 'detail', 'toggle', 'modifystock', 'sync', 'selfconsume', 'publish', 'exchange_coupon_type', 'download');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $type = intval($_GPC['type']);
@@ -73,6 +73,9 @@ if($do == 'display') {
 	$list = pdo_fetchall("SELECT * FROM " . tablename('coupon') . " AS c " . $join_sql . " WHERE  " . $condition_sql . " ORDER BY c.id DESC LIMIT ".($pageindex - 1) * $psize.','.$psize, $condition);
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('coupon') . " AS c " . $join_sql . " WHERE  " . $condition_sql, $condition);
 	foreach($list as &$row) {
+		if (empty($row['card_id'])) {
+			pdo_delete('coupon', array('id' => $row['id']));
+		}
 		$row['date_info'] = iunserializer($row['date_info']);
 		if ($row['date_info']['time_type'] == 1) {
 			$row['date_info'] = $row['date_info']['time_limit_start'].'-'. $row['date_info']['time_limit_end'];
@@ -381,4 +384,21 @@ if($do == 'post') {
 	} else {
 		message(error(-1, '修改失败'), referer(), 'ajax');
 	}
+} elseif ($do == 'download') {
+	$offset = $_GPC['__input']['offset'];
+	$data = array(
+		'offset' => $offset,
+		'count' => 50
+	);
+	$card_list = $coupon_api->batchgetCard($data);
+	$card_list_total = $card_list['total_num'];
+	$card_list_total = 100;
+	$download_info = activity_coupon_download($card_list);
+	if (is_error($download_info)) {
+		message(error(-1, $download_info['message']), '', 'ajax');
+	} else {
+		$response['offset'] = $offset;
+		$response['total'] = $card_list_total;
+	}
+	message(error(0, $response), '', 'ajax');
 }

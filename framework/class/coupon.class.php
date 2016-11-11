@@ -489,6 +489,27 @@ class coupon extends WeiXinAccount {
 		return $result['card'];
 	}
 
+	//批量查询卡券列表
+	public function batchgetCard($data) {
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/card/batchget?access_token={$token}";
+		load()->func('communication');
+		$response = ihttp_request($url, json_encode($data));
+		if(is_error($response)) {
+			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		}
+		$result = @json_decode($response['content'], true);
+		if(empty($result)) {
+			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
+		} elseif(!empty($result['errcode'])) {
+			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+		}
+		return $result;
+	}	
+
 	public function updateCard($card_id) {
 		$token = $this->getAccessToken();
 		if (is_error($token)) {

@@ -75,7 +75,7 @@
 	</div>
 </div>
 {/if}
-<div class="main">
+<div class="main" id="coupon_display" ng-controller="CouponDisplayCtrl" ng-cloak>
 	<div class="panel panel-info">
 	<div class="panel-heading">筛选</div>
 	<div class="panel-body">
@@ -229,10 +229,11 @@
 				{/loop}
 			</tbody>
 		</table>
-		</div>
 	</div>
+</div>
 	{if COUPON_TYPE == WECHAT_COUPON}
-	<a class="btn btn-success js-sync pull-left" onclick="util.ajaxshow('{php echo url('activity/coupon/sync', array('type' => 1))}')">更新全部卡券最新状态</a>
+	<a class="btn btn-success js-sync pull-left" onclick="util.ajaxshow('{php echo url('activity/coupon/sync', array('type' => 1))}')">更新全部卡券最新状态</a>&nbsp;&nbsp;
+	<a class="btn btn-success" ng-click="download();">同步卡券信息</a>
 	{/if}
 	<div class="pull-right">{$pager}</div>
 </div>
@@ -298,12 +299,18 @@
 			}
 		});
 	});
+	$(function(){
+		angular.module('couponApp').value('config', {
+			'download_url' : "{php echo url('activity/coupon/download')}",
+			'success_url' : "{php echo url('activity/coupon/display')}"
+		});
+		angular.bootstrap(document, ['couponApp']);
+	});
 </script>
 {/if}
 <script>
 	$(function(){
 		require(['bootstrap.switch'], function() {
-			angular.bootstrap(document, ['app']);
 			$(":checkbox[name='flag']").bootstrapSwitch();
 			$(':checkbox').on('switchChange.bootstrapSwitch', function(e, state){
 				$this = $(this);
