@@ -792,26 +792,23 @@ EOF;
 				if (!empty($coupon_record)) {
 					pdo_update('coupon_record', array('code' => trim($message['usercardcode'])),array('id' => $coupon_record['id']));
 				} else {
-					$qrcode_info = pdo_get('qrcode', array('qrcid' => $message['outerid']));
-					if (!empty($qrcode_info)) {
-						$fans_info = mc_fansinfo($message['fromusername']);
-						$coupon_info = pdo_get('coupon', array('card_id' => $message['cardid']));
-						$pcount = pdo_fetchcolumn("SELECT count(*) FROM " . tablename('coupon_record') . " WHERE `openid` = :openid AND `couponid` = :couponid", array(':couponid' => $coupon_info['id'], ':openid' => trim($message['fromusername'])));
-						if ($pcount < $coupon_info['get_limit'] && $coupon_info['quantity'] > 0) {
-							$insert_data = array(
-								'uniacid' => $qrcode_info['uniacid'],
-								'card_id' => $message['cardid'],
-								'openid' => $message['fromusername'],
-								'code' => $message['usercardcode'],
-								'addtime' => TIMESTAMP,
-								'status' => '1',
-								'uid' => $fans_info['uid'],
-								'remark' => '用户通过投放扫码',
-								'couponid' => $coupon_info['id']
-							);
-							pdo_insert('coupon_record', $insert_data);
-							pdo_update('coupon', array('quantity' => $coupon_info['quantity'] - 1, 'dosage' => $coupon_info['dosage'] + 1), array('uniacid' => $qrcode_info['uniacid'],'id' => $coupon_info['id']));
-						}
+					$fans_info = mc_fansinfo($message['fromusername']);
+					$coupon_info = pdo_get('coupon', array('card_id' => $message['cardid']));
+					$pcount = pdo_fetchcolumn("SELECT count(*) FROM " . tablename('coupon_record') . " WHERE `openid` = :openid AND `couponid` = :couponid", array(':couponid' => $coupon_info['id'], ':openid' => trim($message['fromusername'])));
+					if ($pcount < $coupon_info['get_limit'] && $coupon_info['quantity'] > 0) {
+						$insert_data = array(
+							'uniacid' => $fans_info['uniacid'],
+							'card_id' => $message['cardid'],
+							'openid' => $message['fromusername'],
+							'code' => $message['usercardcode'],
+							'addtime' => TIMESTAMP,
+							'status' => '1',
+							'uid' => $fans_info['uid'],
+							'remark' => '用户通过投放扫码',
+							'couponid' => $coupon_info['id']
+						);
+						pdo_insert('coupon_record', $insert_data);
+						pdo_update('coupon', array('quantity' => $coupon_info['quantity'] - 1, 'dosage' => $coupon_info['dosage'] + 1), array('uniacid' => $fans_info['uniacid'],'id' => $coupon_info['id']));
 					}
 				}
 			} else {
