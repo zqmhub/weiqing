@@ -16,11 +16,12 @@ class PaycenterModuleSite extends WeModuleSite {
 				if(is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
 					$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
 					if(empty($clerk)) {
-						message('您没有管理该店铺的权限', referer(), 'error');
+						isetcookie('_pc_session', false, -100);
+						return;
 					}
 					$_W['uid'] = $user['uid'];
 					$_W['username'] = $user['username'];
-					$_W['user'] = $user;
+					$_W['user'] = $user;	
 				} else {
 					isetcookie('_pc_session', false, -100);
 				}
